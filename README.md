@@ -1,1 +1,1 @@
-# SSAFY_finance_pjt
+# SSAFY-finance-pjt
