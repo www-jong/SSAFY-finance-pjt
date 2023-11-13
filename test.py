@@ -1,2 +1,2 @@
-print('ggdsgd')
-print('sdfdsfdg')
+테스트2입니다.
+gdsds
