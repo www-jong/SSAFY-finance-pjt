@@ -94,7 +94,12 @@ def exchange_v2(request):
                 data = response.json()
                 if not data: #요청시간이 지났을 경우, 503상태 반환
                     exchange_date.delete()
-                    return Response({'message': '영업시간이 아닙니다'}, status=503)
+                    #영업시간이 아니므로, 가장 최근데이터 보내기
+                    latest_exchange_date=ExchangeDate.objects.latest('date_info')
+                    exchange_info_list = ExchangeInfo.objects.filter(exchangeDate=latest_exchange_date)
+                    data = ExchangeInfoSerializer(exchange_info_list, many=True)
+                    #print('@@@@@@@@@@@@@@@@',data.data)
+                    return Response({'message': '영업시간이 아닙니다','data':data.data,'datetime':'latest'})
                 for item in data:
                     item.pop('result',None)
                     form = ExchangeInfoForm(data=item)
@@ -105,7 +110,7 @@ def exchange_v2(request):
                         print('저장됨',item['cur_nm'])
                     else:
                         print('저장안됨')
-                return Response(data)
+                return Response({'data':data,'datetime':REQUEST_DATE})
             else:
                 return Response({'error': 'API request failed'}, status=500)
         except Exception as e:
@@ -113,4 +118,4 @@ def exchange_v2(request):
     exchange_info = ExchangeInfo.objects.filter(exchangeDate=exchange_date)
     serializer = ExchangeInfoSerializer(exchange_info, many=True)
     print('이미 데이터 존재')
-    return Response(serializer.data)
+    return Response({'data':serializer.data,'datetime':REQUEST_DATE})
