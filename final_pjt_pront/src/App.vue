@@ -7,7 +7,15 @@
       </div>
       <!-- 추가적인 네비게이션 메뉴나 로고 등을 여기에 배치할 수 있습니다 -->
       <div class="flex items-center space-x-4">
-        <p>dd</p>
+        <template v-if="store.isLogin">
+          <p>{{store.original_username}}님 환영합니다</p> 
+          <a type="button" @click="logOut"  class="hover:text-gray-300">Logout</a>
+      </template>
+      <template v-else>      
+        <p>{{name}}</p>  
+        <RouterLink class="hover:text-gray-300" :to="{name:'LogInView'}">LogIn</RouterLink>
+        <RouterLink class="hover:text-gray-300" :to="{name:'SignUpView'}">SignUpPage</RouterLink>
+      </template>
       </div>
     </nav>
   </header>
@@ -16,6 +24,14 @@
 
 <script setup>
 import { RouterView, RouterLink } from 'vue-router';
+import {useCounterStore} from '@/stores/counter'
+const store=useCounterStore()
+const name=store.original_username
+console.log(store.original_username)
+const logOut = () => {
+  console.log('dd')
+  store.logOut();
+}
 </script>
 
 <style scoped>
