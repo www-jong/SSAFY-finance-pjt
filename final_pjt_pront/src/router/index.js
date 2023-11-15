@@ -3,10 +3,10 @@ import HomeView from '@/views/HomeView.vue'
 import KakaoView from '@/views/KakaoView.vue'
 import SignUpView from '@/views/SignUpView.vue'
 import LogInView from '@/views/LogInView.vue'
-import ArticleView from '@/views/ArticleView.vue'
-import DetailView from '@/views/DetailView.vue'
-import CreateView from '@/views/CreateView.vue'
-
+import ArticleView from '@/views/boards/ArticleView.vue'
+import DetailView from '@/views/boards/DetailView.vue'
+import CreateView from '@/views/boards/CreateView.vue'
+import ExChangeView from '@/views/ExChangeView.vue'
 import {useCounterStore} from '@/stores/counter'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -45,6 +45,16 @@ const router = createRouter({
       path:'/articles/:id',
       name:'DetailView',
       component:DetailView
+    },
+    {
+      path:'/ExChange',
+      name:'ExChangeView',
+      component:ExChangeView
+    },
+    {
+      path:'/ExChange',
+      name:'Board1View',
+      component:ExChangeView
     },
   ]
 })

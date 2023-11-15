@@ -9,6 +9,8 @@ export const useCounterStore = defineStore('counter', () => {
   const API_URL = import.meta.env.VITE_BACKSERVER
   const router = useRouter()
   const original_username = ref('')
+  const exchange_data=ref({})
+  const exchange_datetime=ref('')
   const isLogin = computed(()=>{
     if (token.value === null){
       return false
@@ -37,7 +39,6 @@ export const useCounterStore = defineStore('counter', () => {
   }
 
   const logOut = function(){
-
       token.value = null
       router.push({name:'HomeView'})
       console.log('로그아웃 완료')
@@ -63,18 +64,17 @@ export const useCounterStore = defineStore('counter', () => {
     .catch(err => console.log(err))
   }
 
-  const getArticles = function(){
+  const getExChange = function(){
     axios({
       method:'get',
-      url:`${API_URL}/boards/articles/`,
-      headers:{
-        Authorization: `Token ${token.value}`
-      }
+      url:`${API_URL}/api/v1/exchange/`,
     })
     .then(res => {
-      articles.value = res.data
+      exchange_data.value=res.data.data
+      exchange_datetime.value=res.data.datetime
+      console.log(res.data)
     })
     .catch(err => console.log(err))
   }
-  return {articles, API_URL,original_username, getArticles, signUp, logIn, token,isLogin, logOut}
+  return {articles, API_URL,original_username, signUp, logIn, token,isLogin, logOut,getExChange,exchange_data,exchange_datetime}
 }, { persist: true })
