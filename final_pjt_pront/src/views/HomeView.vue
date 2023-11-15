@@ -1,8 +1,8 @@
-<script setup>
-</script>
-
 <template>
   <main>
-    <h1>하이</h1>
+    <h1>메인메뉴</h1>
   </main>
 </template>
+
+<script setup>
+</script>
