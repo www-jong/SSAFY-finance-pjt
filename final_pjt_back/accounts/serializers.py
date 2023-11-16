@@ -1,7 +1,31 @@
 from dj_rest_auth.registration.serializers import RegisterSerializer
+from dj_rest_auth.serializers import LoginSerializer as DefaultLoginSerializer
+from dj_rest_auth.serializers import JWTSerializer as DefaultJWTSerializer
 from rest_framework import serializers
 from .models import CustomUser
+from rest_framework.authtoken.models import Token
+from django.contrib.auth import get_user_model
 
+class CustomTokenSerializer(serializers.ModelSerializer):
+    username = serializers.SerializerMethodField()
+    nickname=serializers.SerializerMethodField()
+    def get_username(self, obj):
+        return obj.user.username
+
+    def get_nickname(self,obj):
+        return obj.user.nickname
+    class Meta:
+        model = Token
+        fields = ('key', 'user', 'username','nickname')
+
+class CustomLoginSerializer(DefaultLoginSerializer):
+    def get_response_data(self, user):
+        data = super().get_response_data(user)
+        data['username'] = user.username  # 사용자 이름 추가
+        data['nickname'] = user.nickname
+        print(data)
+        return data
+    
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser

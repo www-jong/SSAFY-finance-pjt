@@ -13,8 +13,7 @@ export const useCounterStore = defineStore('counter', () => {
   const original_username = ref('')
   const exchange_data=ref({})
   const exchange_datetime=ref('')
-
-  console.log('@@@',articles)
+  const original_nickname = ref('')
   const isLogin = computed(()=>{
     if (token.value === null){
       return false
@@ -35,7 +34,10 @@ export const useCounterStore = defineStore('counter', () => {
     })
     .then(res=>{
       token.value = res.data.key
-      original_username.value=username
+      console.log('리턴정보',res.data)
+      original_username.value=res.data.username
+      original_nickname.value=res.data.nickname
+      console.log('로그인 정보',res.data,original_nickname)
       router.push({name:'HomeView'})
       console.log('로그인 완료')
     })
@@ -44,6 +46,9 @@ export const useCounterStore = defineStore('counter', () => {
 
   const logOut = function(){
       token.value = null
+      original_username.value = null
+      original_nickname.value = null
+
       router.push({name:'HomeView'})
       console.log('로그아웃 완료')
   }
@@ -164,5 +169,5 @@ export const useCounterStore = defineStore('counter', () => {
         console.log(err)
       })
   }
-  return {articles,article,comments, API_URL,original_username, signUp, logIn, token,isLogin, logOut,getExChange,exchange_data,exchange_datetime,getBoards,createArticle,DetailArticle,createComments}
+  return {articles,article,comments, API_URL,original_username, signUp, logIn, token,isLogin, logOut,getExChange,exchange_data,exchange_datetime,getBoards,createArticle,DetailArticle,createComments,original_nickname}
 }, { persist: true })

@@ -155,9 +155,14 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
-REST_AUTH_REGISTER_SERIALIZERS = {
+#REST_AUTH_REGISTER_SERIALIZERS = {
+#    'REGISTER_SERIALIZER': 'accounts.serializers.CustomRegisterSerializer',
+#}
+REST_AUTH = {
     'REGISTER_SERIALIZER': 'accounts.serializers.CustomRegisterSerializer',
+    'TOKEN_SERIALIZER': 'accounts.serializers.CustomTokenSerializer'
 }
+
 ACCOUNT_ADAPTER = 'accounts.adapters.CustomUserAccountAdapter'
 
 MEDIA_ROOT = BASE_DIR /'media'
