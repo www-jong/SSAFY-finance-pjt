@@ -95,6 +95,7 @@ def exchange_v2(request):
                 if not data: #요청시간이 지났을 경우, 503상태 반환
                     exchange_date.delete()
                     #영업시간이 아니므로, 가장 최근데이터 보내기
+                    print('영업시간 아님')
                     latest_exchange_date=ExchangeDate.objects.latest('date_info')
                     exchange_info_list = ExchangeInfo.objects.filter(exchangeDate=latest_exchange_date)
                     data = ExchangeInfoSerializer(exchange_info_list, many=True)

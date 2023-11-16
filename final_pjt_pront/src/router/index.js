@@ -3,7 +3,7 @@ import HomeView from '@/views/HomeView.vue'
 import KakaoView from '@/views/KakaoView.vue'
 import SignUpView from '@/views/SignUpView.vue'
 import LogInView from '@/views/LogInView.vue'
-import ArticleView from '@/views/boards/ArticleView.vue'
+import BoardView from '@/views/boards/BoardView.vue'
 import DetailView from '@/views/boards/DetailView.vue'
 import CreateView from '@/views/boards/CreateView.vue'
 import ExChangeView from '@/views/ExChangeView.vue'
@@ -32,17 +32,12 @@ const router = createRouter({
       component:LogInView
     },
     {
-      path:'/create',
+      path:'/create/:board_type',
       name: 'CreateView',
       component:CreateView
     },
     {
-      path: '/article',
-      name: 'ArticleView',
-      component:ArticleView
-    },
-    {
-      path:'/articles/:id',
+      path:'/Board/:board_type/:article_pk',
       name:'DetailView',
       component:DetailView
     },
@@ -52,9 +47,9 @@ const router = createRouter({
       component:ExChangeView
     },
     {
-      path:'/ExChange',
-      name:'Board1View',
-      component:ExChangeView
+      path:'/Board/:board_type',
+      name:'BoardView',
+      component:BoardView
     },
   ]
 })
