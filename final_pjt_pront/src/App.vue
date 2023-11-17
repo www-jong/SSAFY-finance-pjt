@@ -24,7 +24,7 @@
       </div>
       <div class="flex items-center space-x-4">
         <template v-if="store.isLogin">
-          <RouterLink class="hover:text-gray-300" :to="{name:'AccountDetailView',params:{search_username:store.original_username}}">{{store.original_username}}님 환영합니다</RouterLink>
+          <RouterLink class="hover:text-gray-300" :to="{name:'AccountDetailView',params:{search_username:store.my_username}}">{{store.my_username}}님 환영합니다</RouterLink>
           <a type="button" @click="logOut"  class="hover:text-gray-300">Logout</a>
       </template>
       <template v-else>      

@@ -1,7 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
-
+from django.contrib.auth import get_user_model
 # permission Decorators
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated,IsAdminUser
@@ -12,7 +12,7 @@ from .serializers import ArticleSerializer,CommentSerializer
 from .models import Article,Comment
 
 
-@api_view(['GET', 'POST'])
+@api_view(['GET', 'POST','DELETE'])
 @permission_classes([IsAuthenticated])
 def article_list(request,board_type):
     print('!!!!',board_type)
@@ -33,8 +33,11 @@ def article_list(request,board_type):
         if serializer.is_valid(raise_exception=True):
             serializer.save(user=request.user)
             return Response({'data':serializer.data,'message':'success'}, status=status.HTTP_201_CREATED)
-
-
+    elif request.method=='DELETE':
+        article=Article.objects.get(pk=request.data['article_id'])
+        article.delete()
+        return Response({'message':'success'},status=status.HTTP_204_NO_CONTENT)
+        print('DELETE')
 
 @api_view(['GET'])
 def article_detail(request,board_type ,article_pk):
@@ -72,3 +75,21 @@ def comments_delete(request, article_pk, comment_pk):
             comment.delete()
     return redirect('articles:detail', article_pk)
     '''
+
+    
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def article_like(request):
+    print('도달',request.data['from_user_id'])
+    from_user=get_object_or_404(get_user_model(),pk=request.data['from_user_id'])
+    to_article=get_object_or_404(Article,pk=request.data['to_article_id'])
+    message=''
+    if to_article.like_users.filter(pk=request.data['from_user_id']).exists():
+        to_article.like_users.remove(from_user)
+        message='unfollowed'
+    else:
+        to_article.like_users.add(from_user)
+        message='followed'
+        
+    print('성공')
+    return Response({'message':message}, status=status.HTTP_200_OK)

@@ -1,72 +1,66 @@
 <template>
   <div class="container mx-auto p-6">
     <h1 class="text-3xl font-bold text-center mb-6">Detail</h1>
+    
     <!-- 뒤로 가기 버튼 -->
-    <button 
-      @click="goBack" 
-      class="mb-6 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-    >
-      뒤로 가기
-    </button>
+    <button @click="goBack" class="mb-6 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">뒤로 가기</button>
+
     <div v-if="article && article.user" class="bg-white p-4 rounded-lg shadow-md">
-      <p class="text-md text-gray-700"><span class="font-semibold">작성자:</span> {{article.user.username }} <span class="font-semibold">별명:</span> {{ article.user.nickname }}</p>
+      <p class="text-md text-gray-700"><span class="font-semibold">작성자:</span> {{ article.user.username }} <span class="font-semibold">별명:</span> {{ article.user.nickname }}</p>
       <p class="text-lg font-bold text-gray-900 mt-2">제목: {{ article.title }}</p>
       <p class="text-gray-600 mt-2">내용: {{ article.content }}</p>
       <p class="text-sm text-gray-500 mt-2">작성일: {{ article.created_at }}</p>
       <p class="text-sm text-gray-500 mt-2">수정일: {{ article.updated_at }}</p>
+
+      <!-- 좋아요 버튼 -->
+      <button @click="toggleArticleLike" class="mb-6 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        좋아요 {{ article.like_users.length }}
+      </button>
+
+      <!-- 게시글 삭제 버튼 -->
+      <button v-if="isArticleOwner" @click="deleteArticle" class="mt-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">게시글 삭제</button>
+
+      <!-- 댓글 작성 폼 -->
       <div class="mt-6">
         <h2 class="text-xl font-bold mb-3">댓글 작성하기</h2>
         <textarea v-model.trim="newComment" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="댓글을 입력하세요"></textarea>
         <button @click="submitComment(0)" class="mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">댓글 작성</button>
       </div>
+
+      <!-- 댓글 목록 -->
       <div class="mt-6">
         <h2 class="text-xl font-bold mb-3">댓글 목록</h2>
         <div class="space-y-4">
-          <div 
-            v-for="comment in filteredComments" 
-            :key="comment.id" 
-            class="bg-gray-100 p-3 rounded-lg"
-          >
-
+          <div v-for="comment in filteredComments" :key="comment.id" class="bg-gray-100 p-3 rounded-lg">
             <p class="font-semibold">{{ comment.user.username }} ({{ comment.user.nickname }})</p>
             <p>{{ comment.content }}</p>
             <p class="text-sm text-gray-600">{{ formatDate(comment.created_at) }}</p>
 
             <!-- 대댓글 작성 버튼 -->
-            <button @click="toggleReplyForm(comment.id)" class="mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-              대댓글 작성
-            </button>
+            <button @click="toggleReplyForm(comment.id)" class="mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">대댓글 작성</button>
 
             <!-- 대댓글 작성 영역 -->
             <div v-if="comment.showReplyForm" class="mt-2">
               <textarea v-model.trim="comment.newReply" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="대댓글을 입력하세요"></textarea>
-              <button @click="submitReply(comment.id)" class="mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                대댓글 작성
-              </button>
+              <button @click="submitReply(comment.id)" class="mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">대댓글 작성</button>
             </div>
 
-            <!-- 대댓글 표시 -->
+            <!-- 대댓글 목록 -->
             <div class="space-y-2">
-              <div 
-                v-for="reply in filteredReply.filter(c => c.parent_comment === comment.id)" 
-                :key="reply.id" 
-                class="bg-gray-200 p-2 rounded-lg ml-4"
-              >
+              <div v-for="reply in filteredReply.filter(c => c.parent_comment === comment.id)" :key="reply.id" class="bg-gray-200 p-2 rounded-lg ml-4">
                 <p class="font-semibold">{{ reply.user.username }} ({{ reply.user.nickname }})</p>
                 <p>{{ reply.content }}</p>
                 <p class="text-sm text-gray-600">{{ formatDate(reply.created_at) }}</p>
               </div>
             </div>
-
           </div>
         </div>
       </div>
     </div>
-    <div v-else>
-      로딩중입니다..
-    </div>
+    <div v-else>로딩중입니다..</div>
   </div>
 </template>
+
 
 
 
@@ -100,8 +94,6 @@ onMounted(() => {
     article_pk:route.params.article_pk
   }
   store.DetailArticle(payload)
-  console.log('로드',article.value)
-  console.log('로드 댓글',comments.value)
 })
 const article= computed(() => store.article)
 const comments = computed(() => store.comments)
@@ -117,16 +109,14 @@ const submitComment = (parent_pk) => {
     alert('댓글 내용을 입력해주세요.');
     return;
   }
-  console.log('댓글작성! 추가전 댓글들',comments.value)
-  console.log('닉네넴',store.original_nickname)
   const newCommentObject = {
     article_pk: route.params.article_pk,
     content: newComment.value,
     parent_pk:parent_pk,
     parent_comment: parent_pk === 0 ? null : parent_pk,
-    user:{username:store.original_username,nickname:store.original_nickname},
+    user:{username:store.my_username,nickname:store.my_nickname},
     created_at:'now',
-    id:'임시요'
+    id:'temp'
 
   };
 
@@ -159,7 +149,7 @@ const submitReply = (commentId) => {
     article_pk: route.params.article_pk,
     content: comment.newReply,
     parent_comment: commentId === 0 ? null : commentId,
-    user: { username: store.original_username, nickname: store.original_nickname },
+    user: { username: store.my_username, nickname: store.my_nickname },
     created_at: new Date().toISOString(),
     id: '임시요' // 실제로는 고유한 ID를 생성해야 합니다.
   };
@@ -174,10 +164,41 @@ const submitReply = (commentId) => {
   comment.newReply = '';
   comment.showReplyForm = false; // 대댓글 작성 영역 닫기
 };
-const goBack = () => {
-  router.back()
-}
+const toggleArticleLike = (article) => {
+  store.article_like(store.my_id,route.params.article_pk)
+  // 서버에 게시글 좋아요 상태를 토글하는 요청 보내기
+  // 예: axios.post(...)
+  // 응답에 따라 article.like_users 및 article.isLikedByCurrentUser 업데이트
+};
 
+const toggleCommentLike = (comment) => {
+  // 서버에 댓글 좋아요 상태를 토글하는 요청 보내기
+  // 예: axios.post(...)
+  // 응답에 따라 comment.like_users 및 comment.isLikedByCurrentUser 업데이트
+};
+
+// 게시글 삭제
+const deleteArticle = () => {
+  if (confirm("이 작업을 수행하시겠습니까?")) {
+    // 사용자가 '확인'을 클릭한 경우의 로직
+    
+    console.log("작업 수행");
+    store.aritlce_delete(route.params.board_type,route.params.article_pk)
+} else {
+    // 사용자가 '취소'를 클릭한 경우의 로직
+    console.log("작업 취소");
+}
+};
+
+// 뒤로 가기
+const goBack = () => {
+  router.back(route.params.article_pk);
+};
+
+// 게시글 작성자 확인
+const isArticleOwner = computed(() => {
+  return article.value && store.my_username === article.value.user.username;
+});
 </script>
 
 <style>

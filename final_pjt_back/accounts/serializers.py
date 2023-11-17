@@ -10,6 +10,7 @@ class CustomTokenSerializer(serializers.ModelSerializer):
     username = serializers.SerializerMethodField()
     nickname= serializers.SerializerMethodField()
     email = serializers.SerializerMethodField()
+    id =  serializers.SerializerMethodField()
     def get_username(self, obj):
         return obj.user.username
 
@@ -19,9 +20,11 @@ class CustomTokenSerializer(serializers.ModelSerializer):
     def get_email(self,obj):
         return obj.user.email
     
+    def get_id(self,obj):
+        return obj.user.id
     class Meta:
         model = Token
-        fields = ('key', 'user', 'username','nickname','email')
+        fields = ('key', 'user', 'username','nickname','email','id')
 
 
 class CustomLoginSerializer(DefaultLoginSerializer):
@@ -46,7 +49,7 @@ class CustomUserDetailSerializer(serializers.ModelSerializer):
         fields = [
             'username', 'email', 'image', 'nickname', 'gender',
             'birth', 'financial_products', 'capital', 'salary',
-            'created_at', 'updated_at', 'followings', 'followers'
+            'created_at', 'updated_at', 'followings', 'followers','id'
         ]
         depth = 1  # followings 필드를 위한 설정
 
