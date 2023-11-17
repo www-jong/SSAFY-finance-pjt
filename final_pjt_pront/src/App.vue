@@ -24,7 +24,7 @@
       </div>
       <div class="flex items-center space-x-4">
         <template v-if="store.isLogin">
-          <p>{{store.original_username}}님 환영합니다</p> 
+          <RouterLink class="hover:text-gray-300" :to="{name:'AccountDetailView',params:{search_username:store.original_username}}">{{store.original_username}}님 환영합니다</RouterLink>
           <a type="button" @click="logOut"  class="hover:text-gray-300">Logout</a>
       </template>
       <template v-else>      
@@ -44,8 +44,8 @@
 import { RouterLink } from 'vue-router';
 import { ref } from 'vue';
 import { useCounterStore } from '@/stores/counter';
-
 const store = useCounterStore();
+const myname=store.username
 const isDropdownOpen = ref(false);
 
 const openDropdown = () => {
@@ -60,6 +60,7 @@ const logOut = () => {
   console.log('dd')
   store.logOut();
 }
+
 // ... Rest of your script ...
 </script>
 

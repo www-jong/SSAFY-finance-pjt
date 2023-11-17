@@ -8,29 +8,51 @@ from django.contrib.auth import get_user_model
 
 class CustomTokenSerializer(serializers.ModelSerializer):
     username = serializers.SerializerMethodField()
-    nickname=serializers.SerializerMethodField()
+    nickname= serializers.SerializerMethodField()
+    email = serializers.SerializerMethodField()
     def get_username(self, obj):
         return obj.user.username
 
     def get_nickname(self,obj):
         return obj.user.nickname
+    
+    def get_email(self,obj):
+        return obj.user.email
+    
     class Meta:
         model = Token
-        fields = ('key', 'user', 'username','nickname')
+        fields = ('key', 'user', 'username','nickname','email')
+
 
 class CustomLoginSerializer(DefaultLoginSerializer):
     def get_response_data(self, user):
         data = super().get_response_data(user)
         data['username'] = user.username  # 사용자 이름 추가
-        data['nickname'] = user.nickname
-        print(data)
+        #data['nickname'] = user.nickname
         return data
     
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['username', 'nickname']  # 'nickname' 필드가 유저 모델에 있는지 확인
+        #fields = ['username', 'nickname','email','followings']  # 'nickname' 필드가 유저 모델에 있는지 확인
+        exclude = ('password',)
 
+class CustomUserDetailSerializer(serializers.ModelSerializer):
+    followers = serializers.SerializerMethodField()
+    financial_products = serializers.StringRelatedField(many=True)  # ManyToManyField
+
+    class Meta:
+        model = CustomUser
+        fields = [
+            'username', 'email', 'image', 'nickname', 'gender',
+            'birth', 'financial_products', 'capital', 'salary',
+            'created_at', 'updated_at', 'followings', 'followers'
+        ]
+        depth = 1  # followings 필드를 위한 설정
+
+    def get_followers(self, obj):
+        # obj는 User 모델의 인스턴스
+        return [follower.username for follower in obj.followers.all()]
 
 class CustomRegisterSerializer(RegisterSerializer):
     nickname = serializers.CharField(max_length=100)
@@ -58,5 +80,6 @@ class CustomRegisterSerializer(RegisterSerializer):
         user.birth = self.cleaned_data.get('birth')
         user.capital = self.cleaned_data.get('capital')
         user.salary = self.cleaned_data.get('salary')
+        user.email = self.cleaned_data.get('email')
         user.save()
         return user

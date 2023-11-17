@@ -10,10 +10,12 @@ export const useCounterStore = defineStore('counter', () => {
   const token = ref(null)
   const API_URL = import.meta.env.VITE_BACKSERVER
   const router = useRouter()
+  const my_email = ref('')
   const original_username = ref('')
   const exchange_data=ref({})
   const exchange_datetime=ref('')
   const original_nickname = ref('')
+  const search_user = ref('')
   const isLogin = computed(()=>{
     if (token.value === null){
       return false
@@ -37,6 +39,7 @@ export const useCounterStore = defineStore('counter', () => {
       console.log('리턴정보',res.data)
       original_username.value=res.data.username
       original_nickname.value=res.data.nickname
+      original_email.value = res.data.email
       console.log('로그인 정보',res.data,original_nickname)
       router.push({name:'HomeView'})
       console.log('로그인 완료')
@@ -57,6 +60,7 @@ export const useCounterStore = defineStore('counter', () => {
     const username = payload.username
     const password1 = payload.password1
     const password2 = payload.password2
+    const email = payload.email
     const birth =  payload.birth // birth 필드 추가
     const gender = payload.gender
     const capital = payload.capital
@@ -66,7 +70,7 @@ export const useCounterStore = defineStore('counter', () => {
       method:'post',
       url:`${API_URL}/accounts/signup/`,
       data:{
-        username,password1,password2,birth,gender,capital,salary,nickname
+        username,password1,password2,email,birth,gender,capital,salary,nickname
       }
     })
     .then(res => {
@@ -103,7 +107,12 @@ export const useCounterStore = defineStore('counter', () => {
       }
     })
     .then(res => {
-      articles.value = res.data
+      if(res.data.message==='success'){
+      articles.value = res.data.data
+    }
+    else{
+      articles.value=''
+    }
     })
     .catch(err => console.log(err))
   }
@@ -169,5 +178,24 @@ export const useCounterStore = defineStore('counter', () => {
         console.log(err)
       })
   }
-  return {articles,article,comments, API_URL,original_username, signUp, logIn, token,isLogin, logOut,getExChange,exchange_data,exchange_datetime,getBoards,createArticle,DetailArticle,createComments,original_nickname}
+// store.js
+const get_user_data = function (search_name, errorCallback) {
+  axios({
+    method: 'get',
+    url: `${API_URL}/accounts/profile/get_user_data/${search_name}`,
+  })
+  .then(res => {
+    if (res.data.message === 'success') {
+      search_user.value = res.data.data;
+    } else {
+      alert('없는 사용자입니다.')
+      errorCallback();
+    }
+  })
+  .catch(err => {
+    alert('없는 사용자입니다.')
+    errorCallback();
+  });
+};
+  return {articles,article,comments, API_URL,original_username, signUp, logIn, token,isLogin, logOut,getExChange,exchange_data,exchange_datetime,getBoards,createArticle,DetailArticle,createComments,original_nickname,get_user_data,search_user}
 }, { persist: true })

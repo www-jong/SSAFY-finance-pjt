@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 
 class CustomUser(AbstractUser):
     nickname = models.CharField(max_length=100, unique=True)
+    email = models.EmailField(max_length=100, unique=True)
     image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
     gender = models.CharField(max_length=6, choices=[('male', 'Male'), ('female', 'Female')])
     birth = models.DateField()  # 생년월일 필드
@@ -12,7 +13,7 @@ class CustomUser(AbstractUser):
     permission = models.IntegerField(default=1)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
+    followings = models.ManyToManyField('self', symmetrical=False, related_name='followers')
     GENDER_CHOICES = [
         ('male', 'Male'),
         ('female', 'Female'),

@@ -163,6 +163,9 @@ REST_AUTH = {
     'TOKEN_SERIALIZER': 'accounts.serializers.CustomTokenSerializer'
 }
 
+ACCOUNT_EMAIL_REQUIRED = False
+ACCOUNT_EMAIL_VERIFICATION = None
+
 ACCOUNT_ADAPTER = 'accounts.adapters.CustomUserAccountAdapter'
 
 MEDIA_ROOT = BASE_DIR /'media'

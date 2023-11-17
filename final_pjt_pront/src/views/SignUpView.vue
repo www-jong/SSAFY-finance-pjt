@@ -6,37 +6,55 @@
         <!-- Username Field -->
         <div class="mb-4">
           <label class="block text-gray-700 text-sm font-bold mb-2" for="username">Username</label>
-          <input type="text" id="username" v-model.trim="username" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+          <input type="text" id="username" v-model.trim="username"
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            required>
         </div>
 
         <!-- Password Field -->
         <div class="mb-4">
           <label class="block text-gray-700 text-sm font-bold mb-2" for="password1">Password</label>
-          <input type="password" id="password1" v-model.trim="password1" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+          <input type="password" id="password1" v-model.trim="password1"
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            required>
         </div>
 
         <!-- Password Confirmation Field -->
         <div class="mb-6">
           <label class="block text-gray-700 text-sm font-bold mb-2" for="password2">Password Confirmation</label>
-          <input type="password" id="password2" v-model.trim="password2" :class="{ 'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline': true, 'border-red-500': !isPasswordMatch }" required>
+          <input type="password" id="password2" v-model.trim="password2"
+            :class="{ 'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline': true, 'border-red-500': !isPasswordMatch }"
+            required>
           <p v-if="!isPasswordMatch" class="text-red-500 text-xs italic">Passwords do not match.</p>
         </div>
 
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-bold mb-2" for="email">Email</label>
+          <input type="email" id="email" v-model.trim="email"
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            required>
+        </div>
         <!-- Nickname Field -->
         <div class="mb-4">
           <label class="block text-gray-700 text-sm font-bold mb-2" for="nickname">Nickname</label>
-          <input type="text" id="nickname" v-model.trim="nickname" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+          <input type="text" id="nickname" v-model.trim="nickname"
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            required>
         </div>
 
         <div class="mb-4">
-    <label class="block text-gray-700 text-sm font-bold mb-2" for="birth">Birth Date</label>
-    <input type="date" id="birth" v-model="birth" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
-  </div>
+          <label class="block text-gray-700 text-sm font-bold mb-2" for="birth">Birth Date</label>
+          <input type="date" id="birth" v-model="birth"
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            required>
+        </div>
 
         <!-- Gender Field -->
         <div class="mb-4">
           <label class="block text-gray-700 text-sm font-bold mb-2" for="gender">Gender</label>
-          <select id="gender" v-model="gender" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+          <select id="gender" v-model="gender"
+            class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            required>
             <option value="" disabled>Select Gender</option>
             <option value="male">Male</option>
             <option value="female">Female</option>
@@ -46,18 +64,21 @@
         <!-- Capital Field (Optional) -->
         <div class="mb-4">
           <label class="block text-gray-700 text-sm font-bold mb-2" for="capital">Capital</label>
-          <input type="number" id="capital" v-model.number="capital" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+          <input type="number" id="capital" v-model.number="capital"
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
         </div>
 
         <!-- Salary Field (Optional) -->
         <div class="mb-4">
           <label class="block text-gray-700 text-sm font-bold mb-2" for="salary">Salary</label>
-          <input type="number" id="salary" v-model.number="salary" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+          <input type="number" id="salary" v-model.number="salary"
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
         </div>
 
         <!-- Submit Button -->
         <div class="flex items-center justify-between">
-          <input type="submit" value="SignUp" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+          <input type="submit" value="SignUp"
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
         </div>
       </form>
     </div>
@@ -71,6 +92,7 @@ import { useCounterStore } from '@/stores/counter';
 const username = ref('');
 const password1 = ref('');
 const password2 = ref('');
+const email = ref('')
 const nickname = ref('');
 const birth = ref('');
 const gender = ref('');
@@ -86,11 +108,12 @@ const signUp = () => {
     alert("Passwords do not match.");
     return;
   }
-  console.log('birth!!',birth)
+  console.log('birth!!', birth)
   const payload = {
     username: username.value,
     password1: password1.value,
     password2: password2.value,
+    email: email.value,
     nickname: nickname.value,
     birth: birth.value,
     gender: gender.value,
@@ -101,6 +124,4 @@ const signUp = () => {
 }
 </script>
 
-<style>
-/* 필요한 추가 스타일링 */
-</style>
+<style>/* 필요한 추가 스타일링 */</style>

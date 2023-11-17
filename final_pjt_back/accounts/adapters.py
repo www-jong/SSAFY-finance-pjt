@@ -15,16 +15,21 @@ class CustomUserAccountAdapter(DefaultAccountAdapter):
         user.image = request.data.get('image')
         user.gender = request.data.get('gender')
         user.birth = request.data.get('birth')
+        user.capital = request.data.get('capital')
+        user.salary = request.data.get('salary')
+        user.permission = request.data.get('permission',1)
         
+
         # Set financial_products using the set() method if provided in the request
         financial_products_data = request.data.get('financial_products')
         if financial_products_data:
             financial_products = CustomUser.objects.filter(pk__in=financial_products_data)
             user.financial_products.set(financial_products)
 
-        user.capital = request.data.get('capital')
-        user.salary = request.data.get('salary')
-        user.permission = request.data.get('permission',1)
+        followings_data = request.data.get('followings')
+        if followings_data:
+            following_users = CustomUser.objects.filter(pk__in=followings_data)
+            user.followings.set(following_users)
         
         user.save()
         return user

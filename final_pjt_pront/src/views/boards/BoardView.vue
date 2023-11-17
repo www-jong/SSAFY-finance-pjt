@@ -27,6 +27,7 @@ onMounted(() => {
 })
 
 watch(() => route.params.board_type, (newBoardType, oldBoardType) => {
+  console.log('watch',newBoardType, oldBoardType)
     store.getBoards(newBoardType)
 });
 </script>

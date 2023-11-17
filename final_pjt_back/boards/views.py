@@ -17,19 +17,22 @@ from .models import Article,Comment
 def article_list(request,board_type):
     print('!!!!',board_type)
     if request.method == 'GET':
-        articles = get_list_or_404(Article,board_type=board_type)
-        print('게시글들',articles)
-        for data in articles:
-            print(data.user)
-        serializer = ArticleSerializer(articles, many=True)
-        return Response(serializer.data)
-
+        try:
+            articles=Article.objects.filter(board_type=board_type)
+            print('게시글들',articles)
+            for data in articles:
+                print(data.user)
+            serializer = ArticleSerializer(articles, many=True)
+            return Response({'data':serializer.data,'message':'success'})
+        except:
+            print('조회실패')
+            return Response({'message':'fail'},status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'POST':
         print('!!!!',request.data,request.user) #여기서 지금 request.user는 username 
         serializer = ArticleSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save(user=request.user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response({'data':serializer.data,'message':'success'}, status=status.HTTP_201_CREATED)
 
 
 

@@ -7,7 +7,9 @@ import BoardView from '@/views/boards/BoardView.vue'
 import DetailView from '@/views/boards/DetailView.vue'
 import CreateView from '@/views/boards/CreateView.vue'
 import ExChangeView from '@/views/ExChangeView.vue'
+import AccountDetailView from '@/views/account/AccountDetailView.vue'
 import {useCounterStore} from '@/stores/counter'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -50,6 +52,11 @@ const router = createRouter({
       path:'/Board/:board_type',
       name:'BoardView',
       component:BoardView
+    },
+    {
+      path:'/accountinfo/:search_username',
+      name:'AccountDetailView',
+      component:AccountDetailView
     },
   ]
 })
