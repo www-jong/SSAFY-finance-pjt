@@ -15,7 +15,6 @@ const store = useCounterStore()
 console.log('views-board-type',route.params.board_type)
 onMounted(() => {
   console.log('dd')
-  store.get_deposit_product()
 })
 
 </script>

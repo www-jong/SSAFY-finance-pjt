@@ -1,4 +1,5 @@
 <template>
+  <LoadingPage v-if="loading" />
   <div class="mt-6" v-if="filteredArticles.length">
     <div class="space-y-4">
       <ArticleListItem 
@@ -10,17 +11,22 @@
     </div>
   </div>
   <div v-else>
-    게시글을 불러오는 중입니다...
+    게시글이 없습니다!
   </div>
 </template>
 
+
 <script setup>
+import LoadingPage from '@/components/LoadingPage.vue'
 import ArticleListItem from '@/components/ArticleListItem.vue'
-import { computed } from 'vue'
+import { computed, defineProps } from 'vue'
 import { useCounterStore } from '@/stores/counter'
 
-const store = useCounterStore()
-const { board_type } = defineProps({ board_type: String })
+const props = defineProps({
+  board_type: String,
+  loading: Boolean // 여기에서 loading을 props로 받습니다.
+})
 
+const store = useCounterStore()
 const filteredArticles = computed(() => store.articles)
 </script>

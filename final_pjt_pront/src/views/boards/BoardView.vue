@@ -7,28 +7,30 @@
     >
       [CREATE]
     </RouterLink>
-    <ArticleList :board_type="route.params.board_type" class="mt-4" />
+    <ArticleList :board_type="route.params.board_type" :loading="loading" class="mt-4" />
   </div>
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useCounterStore } from '@/stores/counter'
 import { useRoute } from 'vue-router'
 import ArticleList from '@/components/ArticleList.vue'
-import { watch } from 'vue';
 
 const route = useRoute()
 const store = useCounterStore()
-console.log('views-board-type',route.params.board_type)
-onMounted(() => {
-  console.log('dd')
-  store.getBoards(route.params.board_type)
+const loading = ref(false) // 로딩 상태 추가
+
+onMounted(async () => {
+  loading.value = true // 로딩 시작
+  await store.getBoards(route.params.board_type)
+  loading.value = false // 로딩 종료
 })
 
-watch(() => route.params.board_type, (newBoardType, oldBoardType) => {
-  console.log('watch',newBoardType, oldBoardType)
-    store.getBoards(newBoardType)
+watch(() => route.params.board_type, async (newBoardType) => {
+  loading.value = true // 로딩 시작
+  await store.getBoards(newBoardType)
+  loading.value = false // 로딩 종료
 });
 </script>
 

@@ -113,6 +113,8 @@ def exchange_v2(request):
                     latest_exchange_date=ExchangeDate.objects.latest('date_info')
                     exchange_info_list = ExchangeInfo.objects.filter(exchangeDate=latest_exchange_date)
                     data = ExchangeInfoSerializer(exchange_info_list, many=True)
+                    if not data:
+                        data={'nodata'}
                     return Response({'message': '영업시간이 아닙니다','data':data.data,'datetime':'latest'})
                 for item in data:
                     item.pop('result',None)
@@ -168,7 +170,7 @@ def save_deposit_products(request):
             result.extend(data)
             #data, max_page_no,total_count = func
         #res_data = requests.get(URL,params=params).json()['result']
-        
+            print(data)
             print(total_count,FinGrpNo,page_no,max_page_no,len(data))
             if page_no>=max_page_no:
                 break

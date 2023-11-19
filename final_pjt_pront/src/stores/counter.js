@@ -302,12 +302,8 @@ export const useCounterStore = defineStore('counter', () => {
         alert("탈퇴 에러.");
       });
   }
-  const get_deposit_product = function (refresh_check) {
-    if (refresh_check) {
-      deposit_products.value = ''
-      saving_products.value = ''
-      console.log('예금조회- 데이터초기화')
-    }
+  const get_deposit_product = function () {
+    console.log(token.value)
     axios({
       method: 'get',
       url: `${API_URL}/api/v1/save_deposit_products/`,
@@ -318,6 +314,7 @@ export const useCounterStore = defineStore('counter', () => {
       .then(res => {
         //alert("예금조회완");
         console.log('예금조회 완')
+        console.log(res.data.data)
         deposit_products.value = res.data.data
         //router.push({ name: 'HomeView' })
       })
@@ -327,12 +324,8 @@ export const useCounterStore = defineStore('counter', () => {
       });
   }
 
-  const get_saving_product = function (refresh_check) {
-    if (refresh_check) {
-      deposit_products.value = ''
-      saving_products.value = ''
-      console.log('적금조회- 데이터초기화')
-    }
+  const get_saving_product = function () {
+ 
     axios({
       method: 'get',
       url: `${API_URL}/api/v1/save_saving_products/`,

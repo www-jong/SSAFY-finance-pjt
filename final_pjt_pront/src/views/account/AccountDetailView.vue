@@ -59,6 +59,7 @@ watch(() => route.params.search_username, (newSearch_username) => {
 
 const editProfile = () => {
     // 프로필 수정 로직
+    
 };
 
 const followUser = () => {

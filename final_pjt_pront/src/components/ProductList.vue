@@ -11,11 +11,12 @@
       <p>예금목록</p>
       <div class="space-y-4">
         <DepositListItem 
-          v-for="(product, index) in filteredDeposits"
+          v-for="(product, index) in paginatedDeposits"
           :key="product.id"
           :product="product"
         />
       </div>
+      <Pagination :current-page="currentPage" :total-pages="totalDepositPages" @change-page="setPage" />
     </div>
     
     <!-- 적금 상품 목록을 보여주는 코드 -->
@@ -23,67 +24,74 @@
       <p>적금목록</p>
       <div class="space-y-4">
         <SavingListItem 
-          v-for="(product, index) in filteredSavings"
+          v-for="(product, index) in paginatedSavings"
           :key="product.id"
           :product="product"
         />
       </div>
-    </div>
-    
-    <!-- 로딩 메시지 -->
-    <div v-else>
-      게시글을 불러오는 중입니다...
+      <Pagination :current-page="currentPage" :total-pages="totalSavingPages" @change-page="setPage" />
     </div>
   </div>
 </template>
 
 <script setup>
-import DepositListItem from '@/components/DepositListItem.vue'
-import SavingListItem from '@/components/SavingListItem.vue'
-import LoaingPage from '@/components/LoadingPage.vue' // 로딩 컴포넌트 추가
-import { computed } from 'vue'
-import { useCounterStore } from '@/stores/counter'
-import { onMounted, ref } from 'vue'
+import { ref, computed, onMounted } from 'vue';
+import DepositListItem from '@/components/DepositListItem.vue';
+import SavingListItem from '@/components/SavingListItem.vue';
+import LoadingPage from '@/components/LoadingPage.vue';
+import Pagination from '@/components/Pagination.vue';
+import { useCounterStore } from '@/stores/counter';
 
-const store = useCounterStore()
-const showDepositList = ref(false) // 예금 상품 목록을 보이게 할지 여부를 나타내는 변수
-const showSavingList = ref(false) // 적금 상품 목록을 보이게 할지 여부를 나타내는 변수
-const loading = ref(false) // 로딩 상태를 관리하기 위한 변수
-let check = true
+const store = useCounterStore();
+const currentPage = ref(1);
+const itemsPerPage = 10;
+const loading = ref(false);
+const showDepositList = ref(false);
+const showSavingList = ref(false);
 
 const loadDepositProducts = async () => {
-  loading.value = true // 로딩 시작
-  showDepositList.value = true
-  showSavingList.value = false
-  if (store.deposit_products.length > 0 || store.saving_products.length > 0) {
-    check = false
-  }
-  await store.get_deposit_product(check) // 예금 상품 목록을 불러오는 비동기 함수 호출
-  loading.value = false // 로딩 종료
-  console.log('온')
-}
+  loading.value = true;
+  showDepositList.value = true;
+  showSavingList.value = false;
+
+  let check = store.deposit_products.length === 0;
+  await store.get_deposit_product(check);
+  loading.value = false;
+};
 
 const loadSavingProducts = async () => {
-  loading.value = true // 로딩 시작
-  showDepositList.value = false
-  showSavingList.value = true
-  if (store.deposit_products.length > 0 || store.saving_products.length > 0) {
-    check = false
-  }
-  await store.get_saving_product(check) // 적금 상품 목록을 불러오는 비동기 함수 호출
-  loading.value = false // 로딩 종료
-}
+  loading.value = true;
+  showDepositList.value = false;
+  showSavingList.value = true;
 
-const filteredDeposits = computed(() => store.deposit_products)
-const filteredSavings = computed(() => store.saving_products)
+  let check = store.saving_products.length === 0;
+  await store.get_saving_product(check);
+  loading.value = false;
+};
 
-// 컴포넌트가 마운트될 때 초기 데이터 로딩
-onMounted(() => {
-  console.log('컴포넌트가 마운트되었습니다.')
-  // 초기 데이터 로딩 또는 필요한 초기 작업 수행
-})
+const paginatedDeposits = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+  return store.deposit_products.slice(start, end);
+});
+
+const paginatedSavings = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+  return store.saving_products.slice(start, end);
+});
+
+const totalDepositPages = computed(() => Math.ceil(store.deposit_products.length / itemsPerPage));
+const totalSavingPages = computed(() => Math.ceil(store.saving_products.length / itemsPerPage));
+
+const setPage = (page) => {
+  currentPage.value = page;
+  console.log(currentPage.value,page)
+};
+
+onMounted(loadDepositProducts);
 </script>
 
 <style scoped>
-/* Tailwind CSS 스타일링을 여기에 추가할 수 있습니다. */
+/* Tailwind CSS 스타일링 */
 </style>
