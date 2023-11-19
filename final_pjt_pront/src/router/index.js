@@ -9,7 +9,7 @@ import CreateView from '@/views/boards/CreateView.vue'
 import ExChangeView from '@/views/ExChangeView.vue'
 import AccountDetailView from '@/views/account/AccountDetailView.vue'
 import {useCounterStore} from '@/stores/counter'
-
+import FinanceProductView from '@/views/product/FinanceProductView.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -57,6 +57,11 @@ const router = createRouter({
       path:'/accountinfo/:search_username',
       name:'AccountDetailView',
       component:AccountDetailView
+    },
+    {
+      path:'/FinanceProductView',
+      name:'FinanceProductView',
+      component:FinanceProductView
     },
   ]
 })

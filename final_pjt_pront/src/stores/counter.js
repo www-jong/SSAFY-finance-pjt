@@ -17,6 +17,8 @@ export const useCounterStore = defineStore('counter', () => {
   const exchange_datetime = ref('')
   const my_nickname = ref('')
   const search_user = ref('')
+  const deposit_products = ref([])
+  const saving_products = ref([])
   const isLogin = computed(() => {
     if (token.value === null) {
       return false
@@ -28,6 +30,7 @@ export const useCounterStore = defineStore('counter', () => {
   const logIn = function (payload) {
     const username = payload.username
     const password = payload.password
+    console.log('로그인시도')
     axios({
       method: 'post',
       url: `${API_URL}/accounts/login/`,
@@ -46,7 +49,7 @@ export const useCounterStore = defineStore('counter', () => {
         router.push({ name: 'HomeView' })
         console.log('로그인 완료')
       })
-      .catch(err => console.log(err))
+      .catch(err => console.log('로그인에러', err))
   }
 
   const logOut = function () {
@@ -254,7 +257,7 @@ export const useCounterStore = defineStore('counter', () => {
       })
   }
 
-  const aritlce_delete = function(board_type,article_id){
+  const aritlce_delete = function (board_type, article_id) {
     axios({
       method: 'delete',
       url: `${API_URL}/boards/${board_type}/`,
@@ -265,14 +268,116 @@ export const useCounterStore = defineStore('counter', () => {
         Authorization: `Token ${token.value}`
       }
     })
-    .then(() => {
-      alert("게시글이 삭제되었습니다.");
-      router.push({ name: 'BoardView', params: { board_type: board_type } });
-    })
-    .catch(err => {
-      console.error(err);
-      alert("게시글 삭제에 실패했습니다.");
-    });
+      .then(() => {
+        alert("게시글이 삭제되었습니다.");
+        router.push({ name: 'BoardView', params: { board_type: board_type } });
+      })
+      .catch(err => {
+        console.error(err);
+        alert("게시글 삭제에 실패했습니다.");
+      });
   }
-  return { articles, article, comments, API_URL, my_id, my_username, signUp, logIn, token, isLogin, logOut, getExChange, exchange_data, exchange_datetime, getBoards, createArticle, DetailArticle, createComments, my_nickname, get_user_data, search_user, followUser, article_like,aritlce_delete }
+
+  const account_delete = function () {
+    axios({
+      method: 'delete',
+      url: `${API_URL}/accounts/profile/edit/`,
+      data: {
+        user_id: my_id.value,
+      },
+      headers: {
+        Authorization: `Token ${token.value}`
+      }
+    })
+      .then(() => {
+        alert("회원탈퇴 완료");
+        token.value = null
+        my_username.value = null
+        my_nickname.value = null
+
+        router.push({ name: 'HomeView' })
+      })
+      .catch(err => {
+        console.error(err);
+        alert("탈퇴 에러.");
+      });
+  }
+  const get_deposit_product = function (refresh_check) {
+    if (refresh_check) {
+      deposit_products.value = ''
+      saving_products.value = ''
+      console.log('예금조회- 데이터초기화')
+    }
+    axios({
+      method: 'get',
+      url: `${API_URL}/api/v1/save_deposit_products/`,
+      headers: {
+        Authorization: `Token ${token.value}`
+      }
+    })
+      .then(res => {
+        //alert("예금조회완");
+        console.log('예금조회 완')
+        deposit_products.value = res.data.data
+        //router.push({ name: 'HomeView' })
+      })
+      .catch(err => {
+        console.error(err);
+        alert("예금조회 에러.");
+      });
+  }
+
+  const get_saving_product = function (refresh_check) {
+    if (refresh_check) {
+      deposit_products.value = ''
+      saving_products.value = ''
+      console.log('적금조회- 데이터초기화')
+    }
+    axios({
+      method: 'get',
+      url: `${API_URL}/api/v1/save_saving_products/`,
+      headers: {
+        Authorization: `Token ${token.value}`
+      }
+    })
+      .then(res => {
+        //alert("예금조회완");
+        console.log('적금조회 완')
+        saving_products.value = res.data.data
+        //router.push({ name: 'HomeView' })
+      })
+      .catch(err => {
+        console.error(err);
+        alert("적금조회 에러.");
+      });
+  }
+  return {
+    articles,
+    article,
+    comments,
+    API_URL,
+    my_id,
+    my_username,
+    signUp,
+    logIn,
+    token,
+    isLogin,
+    logOut,
+    getExChange,
+    exchange_data,
+    exchange_datetime,
+    getBoards, createArticle,
+    DetailArticle, createComments,
+    my_nickname,
+    get_user_data,
+    search_user,
+    followUser,
+    article_like,
+    aritlce_delete,
+    account_delete,
+    get_deposit_product,
+    deposit_products,
+    saving_products,
+    get_saving_product
+  }
 }, { persist: true })

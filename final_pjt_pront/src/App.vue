@@ -6,6 +6,8 @@
         <RouterLink class="hover:text-gray-300" :to="{ name: 'HomeView' }">Home</RouterLink>
         <RouterLink class="hover:text-gray-300" :to="{ name: 'KakaoView' }">KakaoView</RouterLink>
         <RouterLink class="hover:text-gray-300" :to="{ name: 'ExChangeView' }">환율</RouterLink>
+        <RouterLink class="hover:text-gray-300" :to="{ name: 'FinanceProductView' }">금융상품</RouterLink>
+        
         <RouterLink class="hover:text-gray-300" :to="{ name: 'BoardView',params: { board_type: 'free' }}">자유게시판</RouterLink>
         <RouterLink class="hover:text-gray-300" :to="{ name: 'BoardView',params: { board_type: 'secret' }}">비밀게시판</RouterLink>
         
@@ -45,6 +47,7 @@ import { RouterLink } from 'vue-router';
 import { ref } from 'vue';
 import { useCounterStore } from '@/stores/counter';
 const store = useCounterStore();
+console.log('appvue')
 const myname=store.username
 const isDropdownOpen = ref(false);
 
