@@ -1,6 +1,8 @@
 <template>
-  <div class="flex justify-center items-center h-screen bg-gray-100">
-    <div class="w-full max-w-xs">
+  <!-- <div class="flex justify-center items-center h-screen bg-gray-100"> -->
+  <div class="pt-4 bg-gray-100"> 
+    <!-- <div class="w-full max-w-xs"> -->
+      <div class="w-full max-w-md mx-auto">
       <h1 class="mb-6 text-2xl font-semibold text-center text-gray-700">Sign Up Page</h1>
       <form @submit.prevent="signUp" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
         <!-- Username Field -->
@@ -17,6 +19,7 @@
           <input type="password" id="password1" v-model.trim="password1"
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             required>
+          <p v-if="!isPasswordValid" class="text-red-500 text-xs italic">Password must include both letters and numbers.</p>
         </div>
 
         <!-- Password Confirmation Field -->
@@ -99,11 +102,16 @@ const gender = ref('');
 const capital = ref(null); // 선택 필드
 const salary = ref(null); // 선택 필드
 
-const isPasswordMatch = computed(() => password1.value === password2.value);
+const isPasswordValid = computed(() => password1.value.length === 0 || (/[a-zA-Z]/.test(password1.value) && /[0-9]/.test(password1.value)));
+const isPasswordMatch = computed(() => password2.value.length === 0 || password1.value === password2.value);
 
 const store = useCounterStore();
 
 const signUp = () => {
+  if (!isPasswordValid.value) {
+    alert("Password must include both letters and numbers.");
+    return;
+  }
   if (!isPasswordMatch.value) {
     alert("Passwords do not match.");
     return;
