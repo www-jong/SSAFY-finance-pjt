@@ -19,3 +19,23 @@ class ExchangeInfo(models.Model):
 
     def __str__(self):
         return self.cur_unit
+    
+
+# Create your models here.
+class DepositProducts(models.Model):
+    fin_prdt_cd = models.TextField(unique=True)
+    kor_co_nm = models.TextField()
+    fin_prdt_nm = models.TextField()
+    etc_note = models.TextField(null=True,default="없음")
+    join_deny = models.IntegerField()
+    join_member = models.TextField(null=True,default="없음")
+    join_way = models.TextField(null=True,default="없음")
+    spcl_cnd = models.TextField(null=True,default="없음")
+
+class DepositOptions(models.Model):
+    product = models.ForeignKey(DepositProducts, on_delete=models.CASCADE)
+    fin_prdt_cd = models.TextField()
+    intr_rate_type_nm = models.CharField(max_length=100)
+    intr_rate = models.FloatField(null=True,default=-1)
+    intr_rate2 = models.FloatField(null=True,default=-1)
+    save_trm = models.IntegerField()

@@ -35,3 +35,16 @@ def follow(request):
         
     print('성공')
     return Response({'message':message}, status=status.HTTP_200_OK)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def edit(request):
+    if request.method =='DELETE':
+        try:
+            user_id=request.data['user_id']
+            user=CustomUser.objects.get(id=user_id)
+            user.delete()
+            print('삭제 완료')
+            return Response({'message':'success'},status=status.HTTP_200_OK)  # 추후 스테이터스 변경 필요
+        except:
+            return Response({'message':'error'},status=status.HTTP_404_NOT_FOUND)

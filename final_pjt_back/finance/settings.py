@@ -10,9 +10,6 @@ environ.Env.read_env(
     env_file=os.path.join(BASE_DIR.parent, '.env')
 )
 
-
-
-
 #SECRET_KEY = get_secret("SECRET_KEY")
 print(env('DJANGO'))
 # Quick-start development settings - unsuitable for production
@@ -21,6 +18,7 @@ print(env('DJANGO'))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env('DJANGO')
 KOREAEXIM_KEY = env('KOREAEXIM') # 한국 수출입은행 키
+FSS_KEY=env('FSS')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
