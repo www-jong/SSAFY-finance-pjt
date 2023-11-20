@@ -30,7 +30,6 @@ const props = defineProps({
   product:Object,
   showModal: Boolean,
 });
-
 const emit = defineEmits(['update:showModal']);
 
 const closeModal = () => {

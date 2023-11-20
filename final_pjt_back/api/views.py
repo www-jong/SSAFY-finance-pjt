@@ -151,6 +151,7 @@ def save_deposit_products(request):
         else:
             print('aleady')
             pass
+    print(returned_data)
     return Response({'message':'success','data':returned_data})
 
 

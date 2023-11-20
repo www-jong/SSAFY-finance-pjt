@@ -78,28 +78,28 @@ const itemsPerPage = 10;
 const loading = ref(false);
 const showDepositList = ref(false);
 const showSavingList = ref(false);
-
+console.log('dd',showDepositList)
 const loadDepositProducts = async () => {
   loading.value = true;
-  showDepositList.value = true;
   showSavingList.value = false;
 
   let check = store.deposit_products.length === 0;
   if(store.deposit_products.length===0){
   await store.get_deposit_product(check);
 }
+showDepositList.value = true;
   loading.value = false;
 };
 
 const loadSavingProducts = async () => {
   loading.value = true;
   showDepositList.value = false;
-  showSavingList.value = true;
 
   let check = store.saving_products.length === 0;
   if(store.saving_products.length===0){
   await store.get_saving_product(check);
   }
+  showSavingList.value = true;
   loading.value = false;
 };
 
