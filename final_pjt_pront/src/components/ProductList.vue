@@ -1,37 +1,67 @@
 <template>
   <div>
-    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" @click="loadDepositProducts">왼쪽 버튼</button>
-    <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" @click="loadSavingProducts">오른쪽 버튼</button>
+    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" @click="loadDepositProducts">예금목록 보기</button>
+    <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" @click="loadSavingProducts">적금목록 보기</button>
     
     <!-- 로딩 중일 때 로딩 컴포넌트 표시 -->
     <LoadingPage v-if="loading" />
 
-    <!-- 예금 상품 목록을 보여주는 코드 -->
-    <div class="mt-6" v-else-if="showDepositList">
-      <p>예금목록</p>
-      <div class="space-y-4">
-        <DepositListItem 
-          v-for="(product, index) in paginatedDeposits"
-          :key="product.id"
-          :product="product"
-        />
-      </div>
+    <div v-else-if="showDepositList" class="mt-6">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead>
+          <tr>
+            <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Index</th>
+            <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">은행명</th>
+            <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">상품명</th>
+            <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">6개월</th>
+            <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">12개월</th>
+            <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">24개월</th>
+            <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">36개월</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <DepositListItem 
+            v-for="(product, index) in paginatedDeposits"
+            :key="product.id"
+            :product="product"
+            :index="index + 1"
+          />
+        </tbody>
+      </table>
       <Pagination :current-page="currentPage" :total-pages="totalDepositPages" @change-page="setPage" />
     </div>
     
     <!-- 적금 상품 목록을 보여주는 코드 -->
     <div class="mt-6" v-else-if="showSavingList">
-      <p>적금목록</p>
-      <div class="space-y-4">
-        <SavingListItem 
-          v-for="(product, index) in paginatedSavings"
-          :key="product.id"
-          :product="product"
-        />
-      </div>
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead>
+          <tr>
+            <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Index</th>
+            <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">은행명</th>
+            <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">상품명</th>
+            <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">6개월</th>
+            <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">12개월</th>
+            <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">24개월</th>
+            <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">36개월</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <SavingListItem 
+            v-for="(product, index) in paginatedSavings"
+            :key="product.id"
+            :product="product"
+            :index="index + 1"
+          />
+        </tbody>
+      </table>
       <Pagination :current-page="currentPage" :total-pages="totalSavingPages" @change-page="setPage" />
     </div>
+
+
   </div>
+
+
+  
 </template>
 
 <script setup>
@@ -55,7 +85,9 @@ const loadDepositProducts = async () => {
   showSavingList.value = false;
 
   let check = store.deposit_products.length === 0;
+  if(store.deposit_products.length===0){
   await store.get_deposit_product(check);
+}
   loading.value = false;
 };
 
@@ -65,7 +97,9 @@ const loadSavingProducts = async () => {
   showSavingList.value = true;
 
   let check = store.saving_products.length === 0;
+  if(store.saving_products.length===0){
   await store.get_saving_product(check);
+  }
   loading.value = false;
 };
 

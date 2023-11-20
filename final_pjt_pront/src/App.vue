@@ -10,7 +10,7 @@
         
         <RouterLink class="hover:text-gray-300" :to="{ name: 'BoardView',params: { board_type: 'free' }}">자유게시판</RouterLink>
         <RouterLink class="hover:text-gray-300" :to="{ name: 'BoardView',params: { board_type: 'secret' }}">비밀게시판</RouterLink>
-        
+        <RouterLink class="hover:text-gray-300" :to="{ name: 'BoardView',params: { board_type: 'hi' }}">테스트게시판</RouterLink>
         <!-- Dropdown Wrapper -->
         <div class="relative" @mouseenter="openDropdown" @mouseleave="closeDropdown">
           <!-- Dropdown Trigger Button -->

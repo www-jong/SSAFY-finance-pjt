@@ -4,10 +4,10 @@ from django.conf import settings
 import requests
 from datetime import datetime,date
 from pytz import timezone
-from .models import ExchangeDate,ExchangeInfo,DepositProducts,DepositOptions
-from .serializers import ExchangeDateSerializer,ExchangeInfoSerializer,DepositOptionsserializer,DepositProductsSerializer
+from .models import ExchangeDate,ExchangeInfo,DepositProduct,DepositOption,SavingProduct,SavingOption
+from .serializers import ExchangeDateSerializer,ExchangeInfoSerializer,DepositProductSerializer,DepositOptionSerializer,SavingOptionSerializer,SavingProductSerializer
 from .forms import ExchangeInfoForm
-
+import pprint
 BASE_URL = 'http://finlife.fss.or.kr/'
 DEPOSIT_API_URL = 'finlifeapi/depositProductsSearch.json'
 SAVING_API_URL = 'finlifeapi/savingProductsSearch.json'
@@ -21,70 +21,32 @@ def time_formmating(now="",type="to_db"):
     formatted_date = now_kr.strftime('%Y%m%d') if type=="to_db" else now_kr.strftime('%Y-%m-%d')
     return formatted_date
 
-def finance_data_handling(URL,params):
-    #data,max_page_no,total_count,err_cd=finance_data_handling(URL,params)
+def finance_data_divider(URL,params):
     res_data=requests.get(URL,params=params).json()['result']
     data=res_data['baseList']
+    option_data=res_data['optionList']
     max_page_no=res_data['max_page_no']
     total_count=res_data['total_count']
     err_cd=res_data['err_cd']
-    return data,max_page_no,total_count,err_cd
+    return data,max_page_no,total_count,err_cd,option_data
 
-@api_view(['GET'])
-def exchange(request):
-    '''
-    [
-        {
-        "result": 1, 조회결과 1:성공, 2:오류, 3: 인증코드오류
-        "cur_unit": "AED", 통화코드
-        "ttb": "356.51", 송금받을때
-        "tts": "363.72", 송금보낼때
-        "deal_bas_r": "360.12", 매매기준율
-        "bkpr": "360", 장부가격
-        "yy_efee_r": "0",
-        "ten_dd_efee_r": "0",
-        "kftc_bkpr": "360",
-        "kftc_deal_bas_r": "360.12",
-        "cur_nm": "아랍에미리트 디르함" 나라이름
-    },
-    ...
-    ]
-    '''
-    api_key=settings.KOREAEXIM_KEY
-    # Construct the URL with the API key and date
-    url = f'https://www.koreaexim.go.kr/site/program/financial/exchangeJSON?authkey={api_key}&data=AP01'
-    print(api_key)
-    exchange_date, created = ExchangeDate.objects.get_or_create(date_info=time_formmating(type="from_db"))
-    if created: #오늘날짜가 조회된 적 없을경우
-        try:
-            response = requests.get(url)
-            print(response.json())
-            if response.status_code == 200:
-                data = response.json()
-                if not data: #요청시간이 지났을 경우, 503상태 반환
-                    print('노노')
-                    exchange_date.delete()
-                    return Response({'message': '영업시간이 아닙니다'}, status=503)
-                print('?')
-                for item in data:
-                    item.pop('result',None)
-                    form = ExchangeInfoForm(data=item)
-                    if form.is_valid():
-                        exchange_info = form.save(commit=False)
-                        exchange_info.exchangeDate = exchange_date
-                        exchange_info.save()
-                        print('저장됨',item['cur_nm'])
-                    else:
-                        print('저장안됨')
-                return Response(data)
-            else:
-                return Response({'error': 'API request failed'}, status=500)
-        except Exception as e:
-            return Response({'error': str(e)}, status=500)
-    exchange_info = ExchangeInfo.objects.filter(exchangeDate=exchange_date)
-    serializer = ExchangeInfoSerializer(exchange_info, many=True)
-    print('???')
-    return Response(serializer.data)
+def finance_data_handler(product_result,option_result):
+    tmp={}
+    for item in product_result:
+        item['code']=item['fin_co_no']+'_'+item['fin_prdt_cd']
+        if item['code'] not in tmp:
+            tmp[item['code']]={'product':item}
+        else:
+            print('겹침')
+    for item in option_result:
+        item['code']=item['fin_co_no']+'_'+item['fin_prdt_cd']
+        if 'option' in tmp[item['code']]:
+            tmp[item['code']]['option'].append(item)
+        else:
+            tmp[item['code']]['option']=[item]
+    print('tmp 결과',len(tmp))
+    return tmp
+
 
 @api_view(['GET'])
 def exchange_v2(request):
@@ -140,22 +102,21 @@ def exchange_v2(request):
 @api_view(["GET"])
 def api_test(request):
     URL = BASE_URL+DEPOSIT_API_URL
-
     params = {
         'auth':settings.FSS_KEY,
         'topFinGrpNo':'020000',
-        'pageNo':5
+        'pageNo':1
     }
     res_data = requests.get(URL,params=params).json()['result']
     print(res_data)
-    return Response({'data':'good'})
+    return Response({'data':res_data})
 
 @api_view(["GET"])
 def save_deposit_products(request):
     URL = BASE_URL+DEPOSIT_API_URL
-    result=[]
-    all_res_data=[]
-    for FinGrpNo in ['020000','030200','030300','050000','060000']:
+    product_result=[]
+    option_result=[]
+    for FinGrpNo in ['020000','030200','030300','050000','060000']: 
         page_no=1
         print('now',page_no,FinGrpNo)
         while True:
@@ -164,28 +125,48 @@ def save_deposit_products(request):
                 'topFinGrpNo':FinGrpNo,
                 'pageNo':page_no
             }
-            data,max_page_no,total_count,err_cd=finance_data_handling(URL,params)
+            data,max_page_no,total_count,err_cd,option_data=finance_data_divider(URL,params)
             if total_count==0 or err_cd!='000': # 데이터없으면 나가기
                 break
-            result.extend(data)
-            #data, max_page_no,total_count = func
-        #res_data = requests.get(URL,params=params).json()['result']
-            print(data)
-            print(total_count,FinGrpNo,page_no,max_page_no,len(data))
+            product_result.extend(data)
+            option_result.extend(option_data)
             if page_no>=max_page_no:
                 break
             page_no+=1
-        print('next_bank')
-    print('총 결과',len(result))
-        #return Response(res_data)
-    return Response({'message':'good','data':result})
+    filtered_data=finance_data_handler(product_result,option_result)
+    returned_data=[]
+    for item_code in filtered_data:
+        returned_data.append(filtered_data[item_code])
+        product,created=DepositProduct.objects.get_or_create(code=item_code)
+        if created:
+            print('생성',item_code)
+            product.delete()
+            product_serializer=DepositProductSerializer(data=filtered_data[item_code]['product'])
+            if product_serializer.is_valid(raise_exception=True):
+                product=product_serializer.save()
+            for option in filtered_data[item_code]['option']:
+                option_serializer=DepositOptionSerializer(data=option)
+                if option_serializer.is_valid(raise_exception=True):
+                    option_serializer.save(product=product)
+        else:
+            print('aleady')
+            pass
+    return Response({'message':'success','data':returned_data})
+
+
+@api_view(["GET"])
+def show_deposit_products(request):
+    products=DepositProduct.objects.all()
+    serializers=DepositProductSerializer(products, many=True)
+    print(len(products))
+    return Response({'message':'good','data':serializers.data})
 
 @api_view(["GET"])
 def save_saving_products(request):
     URL = BASE_URL+SAVING_API_URL
-    result=[]
-    all_res_data=[]
-    for FinGrpNo in ['020000','030200','030300','050000','060000']:
+    product_result=[]
+    option_result=[]
+    for FinGrpNo in ['020000','030200','030300','050000','060000']: 
         page_no=1
         print('now',page_no,FinGrpNo)
         while True:
@@ -194,46 +175,43 @@ def save_saving_products(request):
                 'topFinGrpNo':FinGrpNo,
                 'pageNo':page_no
             }
-            data,max_page_no,total_count,err_cd=finance_data_handling(URL,params)
+            data,max_page_no,total_count,err_cd,option_data=finance_data_divider(URL,params)
             if total_count==0 or err_cd!='000': # 데이터없으면 나가기
                 break
-            result.extend(data)
-            #data, max_page_no,total_count = func
-        #res_data = requests.get(URL,params=params).json()['result']
-        
-            print(total_count,FinGrpNo,page_no,max_page_no,len(data))
+            product_result.extend(data)
+            option_result.extend(option_data)
             if page_no>=max_page_no:
                 break
             page_no+=1
-        print('next_bank')
-    print('총 결과',len(result))
-        #return Response(res_data)
-    return Response({'message':'good','data':result})
-'''
-        baseList=res_data['baseList']
-        optionList=res_data['optionList']
-        for data in baseList:
-            serial= DepositProductsSerializer(data=data)
-            if serial.is_valid():
-                serial.save()
-                result.append({'data': data, 'status': 'Success', 'result': serial.data})
-            else:
-                result.append({'data': data, 'status': 'Error', 'result': serial.data})
-        for data in optionList:
-            try:
-                Depositproduct=DepositProducts.objects.get(fin_prdt_cd=data['fin_prdt_cd'])
-            except:
-                result.append({'data': data, 'status': 'Error', 'result': 'No data'})
-                print(data)
-            serial = DepositOptionsserializer(data=data)
-            if serial.is_valid(raise_exception=True):
-                serial.save(product=Depositproduct)
-                result.append({'data': data, 'status': 'Success', 'result': serial.data})
-            else:
-                result.append({'data': data, 'status': 'Error', 'result': serial.data})
+    filtered_data=finance_data_handler(product_result,option_result)
+    returned_data=[]
+    for item_code in filtered_data:
+        returned_data.append(filtered_data[item_code])
+        product,created=SavingProduct.objects.get_or_create(code=item_code)
+        if created:
+            print('생성',item_code)
+            product.delete()
+            product_serializer=SavingProductSerializer(data=filtered_data[item_code]['product'])
+            if product_serializer.is_valid(raise_exception=True):
+                product=product_serializer.save()
+            for option in filtered_data[item_code]['option']:
+                option_serializer=SavingOptionSerializer(data=option)
+                if option_serializer.is_valid(raise_exception=True):
+                    option_serializer.save(product=product)
+        else:
+            print('aleady')
+            pass
+    return Response({'message':'success','data':returned_data})
 
-    return Response(result, status=201)
-'''
+@api_view(["GET"])
+def show_saving_products(request):
+    products=SavingProduct.objects.all()
+    serializers=SavingProductSerializer(products, many=True)
+    print(len(products))
+    return Response({'message':'good','data':serializers.data})
+
+
+
 # 전체 정기예금 상품 목록 출력
 # 정기예금 상품 추가하기
 @api_view(["GET", "POST"])

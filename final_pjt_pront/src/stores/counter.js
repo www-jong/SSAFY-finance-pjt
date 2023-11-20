@@ -307,15 +307,13 @@ export const useCounterStore = defineStore('counter', () => {
     axios({
       method: 'get',
       url: `${API_URL}/api/v1/save_deposit_products/`,
-      headers: {
-        Authorization: `Token ${token.value}`
-      }
     })
       .then(res => {
         //alert("예금조회완");
         console.log('예금조회 완')
         console.log(res.data.data)
         deposit_products.value = res.data.data
+        console.log(res.data.data)
         //router.push({ name: 'HomeView' })
       })
       .catch(err => {
@@ -329,9 +327,6 @@ export const useCounterStore = defineStore('counter', () => {
     axios({
       method: 'get',
       url: `${API_URL}/api/v1/save_saving_products/`,
-      headers: {
-        Authorization: `Token ${token.value}`
-      }
     })
       .then(res => {
         //alert("예금조회완");

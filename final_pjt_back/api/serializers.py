@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import ExchangeInfo, ExchangeDate
-from .models import DepositOptions,DepositProducts
+from .models import DepositProduct, DepositOption, SavingProduct, SavingOption, Subscribe_Product
 
 class ExchangeInfoSerializer(serializers.ModelSerializer):
     class Meta:
@@ -12,13 +12,32 @@ class ExchangeDateSerializer(serializers.ModelSerializer):
         model = ExchangeDate
         fields = '__all__'  # 모든 필드를 시리얼라이즈
 
-class DepositProductsSerializer(serializers.ModelSerializer):
+class DepositOptionSerializer(serializers.ModelSerializer):
 	class Meta:
-		model = DepositProducts
-		fields = '__all__'
-
-class DepositOptionsserializer(serializers.ModelSerializer):
-	class Meta:
-		model = DepositOptions
+		model = DepositOption
 		fields = '__all__'
 		read_only_fields = ('product',)
+            
+class DepositProductSerializer(serializers.ModelSerializer):
+	option = DepositOptionSerializer(many=True, read_only=True)
+
+	class Meta:
+		model = DepositProduct
+		fields = '__all__'  # 모든 필드를 포함합니다.
+
+        
+class SavingProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SavingProduct
+        fields = '__all__'
+
+class SavingOptionSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = SavingOption
+		fields = '__all__'
+		read_only_fields = ('product',)
+
+class SubscribeProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subscribe_Product
+        fields = '__all__'
