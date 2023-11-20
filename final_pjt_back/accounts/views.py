@@ -9,15 +9,25 @@ from django.shortcuts import get_object_or_404, get_list_or_404
 from .serializers import CustomUserDetailSerializer
 from .models import CustomUser
 from rest_framework.decorators import permission_classes
+from boards.models import Article,Comment
+from boards.serializers import ArticleSerializer,CommentSerializer
+
 @api_view(['GET'])
 def Detail(request, search_name):
     try:
         print(request)
         user = CustomUser.objects.get(username=search_name)
         serializer = CustomUserDetailSerializer(user)
-        return Response({'data':serializer.data,'message':'success'}, status=status.HTTP_200_OK)
+        print('!!!',user)
+        user_articles=ArticleSerializer(Article.objects.filter(user=user),many=True)
+        user_comments=CommentSerializer(Comment.objects.filter(user=user),many=True)
+
+            
+        result={'message':'success','user_articles': user_articles.data, 'user_comments': user_comments.data,'user_data':serializer.data}
+        return Response(result, status=status.HTTP_200_OK)
     except:
         return Response({'message':'error'}, status=status.HTTP_404_NOT_FOUND)
+    
     
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -48,3 +58,6 @@ def edit(request):
             return Response({'message':'success'},status=status.HTTP_200_OK)  # 추후 스테이터스 변경 필요
         except:
             return Response({'message':'error'},status=status.HTTP_404_NOT_FOUND)
+        
+
+

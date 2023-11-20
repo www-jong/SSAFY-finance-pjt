@@ -17,6 +17,11 @@ export const useCounterStore = defineStore('counter', () => {
   const exchange_datetime = ref('')
   const my_nickname = ref('')
   const search_user = ref('')
+  const search_user_articles= ref('')
+  const search_user_comments= ref('')
+  const join_deposit_products=ref('')
+  const join_saving_products=ref('')
+  
   const deposit_products = ref([])
   const saving_products = ref([])
   const isLogin = computed(() => {
@@ -213,7 +218,12 @@ export const useCounterStore = defineStore('counter', () => {
     })
       .then(res => {
         if (res.data.message === 'success') {
-          search_user.value = res.data.data;
+          console.log(res.data)
+          search_user.value = res.data.user_data;
+          search_user_comments.value=res.data.user_comments
+          search_user_articles.value=res.data.user_articles
+          
+        
         } else {
           alert('없는 사용자입니다.')
           errorCallback();
@@ -360,6 +370,27 @@ export const useCounterStore = defineStore('counter', () => {
         alert("적금조회 에러.");
       });
   }
+  const join_product = function (type,code) {
+    axios({
+      method: 'post',
+      url: `${API_URL}/api/v1/join_${type}_product/`,
+      data: {
+        code: code,
+      },
+      headers: {
+        Authorization: `Token ${token.value}`
+      }
+    })
+      .then(res => {
+        //alert("예금조회완");
+        console.log('예금가입 완')
+        router.push({ name: 'FinanceProductView' })
+      })
+      .catch(err => {
+        console.error(err);
+        alert("예금가입 에러.");
+      });
+  }
   return {
     articles,
     article,
@@ -388,6 +419,9 @@ export const useCounterStore = defineStore('counter', () => {
     get_deposit_product,
     deposit_products,
     saving_products,
-    get_saving_product
+    get_saving_product,
+    search_user_comments,
+    search_user_articles,
+    join_product
   }
 }, { persist: true })

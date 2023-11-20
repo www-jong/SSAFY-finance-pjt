@@ -8,6 +8,8 @@ from .models import ExchangeDate,ExchangeInfo,DepositProduct,DepositOption,Savin
 from .serializers import ExchangeDateSerializer,ExchangeInfoSerializer,DepositProductSerializer,DepositOptionSerializer,SavingOptionSerializer,SavingProductSerializer
 from .forms import ExchangeInfoForm
 import pprint
+from rest_framework.decorators import permission_classes
+from rest_framework.permissions import IsAuthenticated
 BASE_URL = 'http://finlife.fss.or.kr/'
 DEPOSIT_API_URL = 'finlifeapi/depositProductsSearch.json'
 SAVING_API_URL = 'finlifeapi/savingProductsSearch.json'
@@ -154,6 +156,68 @@ def save_deposit_products(request):
     print(returned_data)
     return Response({'message':'success','data':returned_data})
 
+@api_view(["GET"])
+def save_deposit_products2(request):
+    print('저장되있음')
+    URL = BASE_URL+DEPOSIT_API_URL
+    product_result=[]
+    option_result=[]
+    products=DepositProduct.objects.all()
+    if not products:
+        for FinGrpNo in ['020000','030200','030300','050000','060000']: 
+            page_no=1
+            print('now',page_no,FinGrpNo)
+            while True:
+                params = {
+                    'auth':settings.FSS_KEY,
+                    'topFinGrpNo':FinGrpNo,
+                    'pageNo':page_no
+                }
+                data,max_page_no,total_count,err_cd,option_data=finance_data_divider(URL,params)
+                if total_count==0 or err_cd!='000': # 데이터없으면 나가기
+                    break
+                product_result.extend(data)
+                option_result.extend(option_data)
+                if page_no>=max_page_no:
+                    break
+                page_no+=1
+        filtered_data=finance_data_handler(product_result,option_result)
+        returned_data=[]
+        for item_code in filtered_data:
+            returned_data.append(filtered_data[item_code])
+            product,created=DepositProduct.objects.get_or_create(code=item_code)
+            if created:
+                print('생성',item_code)
+                product.delete()
+                product_serializer=DepositProductSerializer(data=filtered_data[item_code]['product'])
+                if product_serializer.is_valid(raise_exception=True):
+                    product=product_serializer.save()
+                for option in filtered_data[item_code]['option']:
+                    option_serializer=DepositOptionSerializer(data=option)
+                    if option_serializer.is_valid(raise_exception=True):
+                        option_serializer.save(product=product)
+            else:
+                print('aleady')
+                pass
+        print(returned_data)
+        return Response({'message':'success','data':returned_data})
+    else:
+        returned_data = []
+        for item in products:
+            # Django REST framework의 Serializer를 사용하여 직렬화
+            product_serializer = DepositProductSerializer(item)
+            options = DepositOption.objects.filter(code=item.code)
+            option_serializer = DepositOptionSerializer(options, many=True)
+
+            returned_data.append({
+                'product': product_serializer.data,
+                'option': option_serializer.data
+            })
+
+        print('완완')
+        print(returned_data)
+        return Response({'message': 'success', 'data': returned_data})
+
 
 @api_view(["GET"])
 def show_deposit_products(request):
@@ -167,42 +231,61 @@ def save_saving_products(request):
     URL = BASE_URL+SAVING_API_URL
     product_result=[]
     option_result=[]
-    for FinGrpNo in ['020000','030200','030300','050000','060000']: 
-        page_no=1
-        print('now',page_no,FinGrpNo)
-        while True:
-            params = {
-                'auth':settings.FSS_KEY,
-                'topFinGrpNo':FinGrpNo,
-                'pageNo':page_no
-            }
-            data,max_page_no,total_count,err_cd,option_data=finance_data_divider(URL,params)
-            if total_count==0 or err_cd!='000': # 데이터없으면 나가기
-                break
-            product_result.extend(data)
-            option_result.extend(option_data)
-            if page_no>=max_page_no:
-                break
-            page_no+=1
-    filtered_data=finance_data_handler(product_result,option_result)
-    returned_data=[]
-    for item_code in filtered_data:
-        returned_data.append(filtered_data[item_code])
-        product,created=SavingProduct.objects.get_or_create(code=item_code)
-        if created:
-            print('생성',item_code)
-            product.delete()
-            product_serializer=SavingProductSerializer(data=filtered_data[item_code]['product'])
-            if product_serializer.is_valid(raise_exception=True):
-                product=product_serializer.save()
-            for option in filtered_data[item_code]['option']:
-                option_serializer=SavingOptionSerializer(data=option)
-                if option_serializer.is_valid(raise_exception=True):
-                    option_serializer.save(product=product)
-        else:
-            print('aleady')
-            pass
-    return Response({'message':'success','data':returned_data})
+
+    products=SavingProduct.objects.all()
+    if not products:
+        for FinGrpNo in ['020000','030200','030300','050000','060000']: 
+            page_no=1
+            print('now',page_no,FinGrpNo)
+            while True:
+                params = {
+                    'auth':settings.FSS_KEY,
+                    'topFinGrpNo':FinGrpNo,
+                    'pageNo':page_no
+                }
+                data,max_page_no,total_count,err_cd,option_data=finance_data_divider(URL,params)
+                if total_count==0 or err_cd!='000': # 데이터없으면 나가기
+                    break
+                product_result.extend(data)
+                option_result.extend(option_data)
+                if page_no>=max_page_no:
+                    break
+                page_no+=1
+        filtered_data=finance_data_handler(product_result,option_result)
+        returned_data=[]
+        for item_code in filtered_data:
+            returned_data.append(filtered_data[item_code])
+            product,created=SavingProduct.objects.get_or_create(code=item_code)
+            if created:
+                print('생성',item_code)
+                product.delete()
+                product_serializer=SavingProductSerializer(data=filtered_data[item_code]['product'])
+                if product_serializer.is_valid(raise_exception=True):
+                    product=product_serializer.save()
+                for option in filtered_data[item_code]['option']:
+                    option_serializer=SavingOptionSerializer(data=option)
+                    if option_serializer.is_valid(raise_exception=True):
+                        option_serializer.save(product=product)
+            else:
+                print('aleady')
+                pass
+        return Response({'message':'success','data':returned_data})
+    else:
+        returned_data = []
+        for item in products:
+            # Django REST framework의 Serializer를 사용하여 직렬화
+            product_serializer = SavingProductSerializer(item)
+            options = SavingOption.objects.filter(code=item.code)
+            option_serializer = SavingOptionSerializer(options, many=True)
+
+            returned_data.append({
+                'product': product_serializer.data,
+                'option': option_serializer.data
+            })
+
+        print('완완')
+        print(returned_data)
+        return Response({'message': 'success', 'data': returned_data})
 
 @api_view(["GET"])
 def show_saving_products(request):
@@ -212,6 +295,49 @@ def show_saving_products(request):
     return Response({'message':'good','data':serializers.data})
 
 
+@api_view(["POST"])
+def join_deposit_product(request):
+    # 요청에서 'code'를 받아 해당 상품 조회
+    code = request.data['code']
+    try:
+        product = DepositProduct.objects.get(code=code)
+    except DepositProduct.DoesNotExist:
+        return Response({'message': '상품을 찾을 수 없습니다.'}, status=404)
+    print(product.join_user.all(),request.user)
+    user = request.user
+    if user in product.join_user.all():
+        # 사용자가 이미 join_user 목록에 있다면 제거
+        product.join_user.remove(user)
+        message = 'success'
+        print('delete_ok')
+    else:
+        # 그렇지 않다면 추가
+        product.join_user.add(user)
+        message = '구독 완료'
+        print('add_ok')
+    return Response({'message': message})
+
+@api_view(["POST"])
+def join_saving_product(request):
+    # 요청에서 'code'를 받아 해당 상품 조회
+    code = request.data['code']
+    try:
+        product = SavingProduct.objects.get(code=code)
+    except SavingProduct.DoesNotExist:
+        return Response({'message': '상품을 찾을 수 없습니다.'}, status=404)
+    print(product.join_user.all(),request.user)
+    user = request.user
+    if user in product.join_user.all():
+        # 사용자가 이미 join_user 목록에 있다면 제거
+        product.join_user.remove(user)
+        message = 'success'
+        print('delete_ok')
+    else:
+        # 그렇지 않다면 추가
+        product.join_user.add(user)
+        message = '구독 완료'
+        print('add_ok')
+    return Response({'message': message})
 
 # 전체 정기예금 상품 목록 출력
 # 정기예금 상품 추가하기

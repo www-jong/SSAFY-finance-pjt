@@ -3,65 +3,88 @@
     <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" @click="loadDepositProducts">예금목록 보기</button>
     <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" @click="loadSavingProducts">적금목록 보기</button>
     
-    <!-- 로딩 중일 때 로딩 컴포넌트 표시 -->
-    <LoadingPage v-if="loading" />
+    <LoadingPage v-if="loading.value" />
 
     <div v-else-if="showDepositList" class="mt-6">
       <table class="min-w-full divide-y divide-gray-200">
         <thead>
-          <tr>
-            <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Index</th>
-            <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">은행명</th>
-            <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">상품명</th>
-            <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">6개월</th>
-            <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">12개월</th>
-            <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">24개월</th>
-            <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">36개월</th>
-          </tr>
-        </thead>
+  <tr>
+    <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style="width: 60px;">Index</th>
+    <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style="width: 150px;">은행명</th>
+    <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">상품명</th>
+    <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style="width: 105px;" @click="sortDeposits('6')">
+      6개월
+      <span v-if="DepositcurrentSort.term === '6' && DepositcurrentSort.direction === 'asc'">↑</span>
+      <span v-else-if="DepositcurrentSort.term === '6' && DepositcurrentSort.direction === 'desc'">↓</span>
+    </th>
+    <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style="width: 105px;" @click="sortDeposits('12')">
+      12개월
+      <span v-if="DepositcurrentSort.term === '12' && DepositcurrentSort.direction === 'asc'">↑</span>
+      <span v-else-if="DepositcurrentSort.term === '12' && DepositcurrentSort.direction === 'desc'">↓</span>
+    </th>
+    <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style="width: 105px;" @click="sortDeposits('24')">
+      24개월
+      <span v-if="DepositcurrentSort.term === '24' && DepositcurrentSort.direction === 'asc'">↑</span>
+      <span v-else-if="DepositcurrentSort.term === '24' && DepositcurrentSort.direction === 'desc'">↓</span>
+    </th>
+    <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style="width: 105px;" @click="sortDeposits('36')">
+      36개월
+      <span v-if="DepositcurrentSort.term === '36' && DepositcurrentSort.direction === 'asc'">↑</span>
+      <span v-else-if="DepositcurrentSort.term === '36' && DepositcurrentSort.direction === 'desc'">↓</span>
+    </th>
+  </tr>
+</thead>
         <tbody class="bg-white divide-y divide-gray-200">
           <DepositListItem 
             v-for="(product, index) in paginatedDeposits"
             :key="product.id"
             :product="product"
-            :index="index + 1"
           />
         </tbody>
       </table>
       <Pagination :current-page="currentPage" :total-pages="totalDepositPages" @change-page="setPage" />
     </div>
-    
-    <!-- 적금 상품 목록을 보여주는 코드 -->
+
     <div class="mt-6" v-else-if="showSavingList">
       <table class="min-w-full divide-y divide-gray-200">
         <thead>
           <tr>
-            <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Index</th>
-            <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">은행명</th>
-            <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">상품명</th>
-            <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">6개월</th>
-            <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">12개월</th>
-            <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">24개월</th>
-            <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">36개월</th>
-          </tr>
+    <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style="width: 60px;">Index</th>
+    <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style="width: 150px;">은행명</th>
+    <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">상품명</th>
+    <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style="width: 105px;" @click="sortSavings('6')">
+      6개월
+      <span v-if="SavingcurrentSort.term === '6' && SavingcurrentSort.direction === 'asc'">↑</span>
+      <span v-else-if="SavingcurrentSort.term === '6' && SavingcurrentSort.direction === 'desc'">↓</span>
+    </th>
+    <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style="width: 105px;" @click="sortSavings('12')">
+      12개월
+      <span v-if="SavingcurrentSort.term === '12' && SavingcurrentSort.direction === 'asc'">↑</span>
+      <span v-else-if="SavingcurrentSort.term === '12' && SavingcurrentSort.direction === 'desc'">↓</span>
+    </th>
+    <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style="width: 105px;" @click="sortSavings('24')">
+      24개월
+      <span v-if="SavingcurrentSort.term === '24' && SavingcurrentSort.direction === 'asc'">↑</span>
+      <span v-else-if="SavingcurrentSort.term === '24' && SavingcurrentSort.direction === 'desc'">↓</span>
+    </th>
+    <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style="width: 105px;" @click="sortSavings('36')">
+      36개월
+      <span v-if="SavingcurrentSort.term === '36' && SavingcurrentSort.direction === 'asc'">↑</span>
+      <span v-else-if="SavingcurrentSort.term === '36' && SavingcurrentSort.direction === 'desc'">↓</span>
+    </th>
+  </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
           <SavingListItem 
             v-for="(product, index) in paginatedSavings"
             :key="product.id"
             :product="product"
-            :index="index + 1"
           />
         </tbody>
       </table>
       <Pagination :current-page="currentPage" :total-pages="totalSavingPages" @change-page="setPage" />
     </div>
-
-
   </div>
-
-
-  
 </template>
 
 <script setup>
@@ -78,29 +101,50 @@ const itemsPerPage = 10;
 const loading = ref(false);
 const showDepositList = ref(false);
 const showSavingList = ref(false);
-console.log('dd',showDepositList)
+
+const DepositcurrentSort = ref({ term: null, direction: null });
+const SavingcurrentSort = ref({ term: null, direction: null });
+
 const loadDepositProducts = async () => {
   loading.value = true;
+  await store.get_deposit_product();
+  showDepositList.value = true;
   showSavingList.value = false;
-
-  let check = store.deposit_products.length === 0;
-  if(store.deposit_products.length===0){
-  await store.get_deposit_product(check);
-}
-showDepositList.value = true;
   loading.value = false;
 };
 
 const loadSavingProducts = async () => {
   loading.value = true;
-  showDepositList.value = false;
-
-  let check = store.saving_products.length === 0;
-  if(store.saving_products.length===0){
-  await store.get_saving_product(check);
-  }
+  await store.get_saving_product();
   showSavingList.value = true;
+  showDepositList.value = false;
   loading.value = false;
+};
+
+const sortDeposits = (term) => {
+  if (DepositcurrentSort.value.term === term) {
+    DepositcurrentSort.value.direction = DepositcurrentSort.value.direction === 'asc' ? 'desc' : 'asc';
+  } else {
+    DepositcurrentSort.value = { term, direction: 'desc' };
+  }
+  applySort(store.deposit_products, DepositcurrentSort.value);
+};
+
+const sortSavings = (term) => {
+  if (SavingcurrentSort.value.term === term) {
+    SavingcurrentSort.value.direction = SavingcurrentSort.value.direction === 'asc' ? 'desc' : 'asc';
+  } else {
+    SavingcurrentSort.value = { term, direction: 'desc' };
+  }
+  applySort(store.saving_products, SavingcurrentSort.value);
+};
+
+const applySort = (products, sort) => {
+  products.sort((a, b) => {
+    const rateA = a.option.find(opt => opt.save_trm === sort.term)?.intr_rate || 0;
+    const rateB = b.option.find(opt => opt.save_trm === sort.term)?.intr_rate || 0;
+    return sort.direction === 'asc' ? rateA - rateB : rateB - rateA;
+  });
 };
 
 const paginatedDeposits = computed(() => {
@@ -120,10 +164,8 @@ const totalSavingPages = computed(() => Math.ceil(store.saving_products.length /
 
 const setPage = (page) => {
   currentPage.value = page;
-  console.log(currentPage.value,page)
 };
 
-onMounted(loadDepositProducts);
 </script>
 
 <style scoped>

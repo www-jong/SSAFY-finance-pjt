@@ -42,13 +42,12 @@ class UserSerializer(serializers.ModelSerializer):
 
 class CustomUserDetailSerializer(serializers.ModelSerializer):
     followers = serializers.SerializerMethodField()
-    financial_products = serializers.StringRelatedField(many=True)  # ManyToManyField
 
     class Meta:
         model = CustomUser
         fields = [
             'username', 'email', 'image', 'nickname', 'gender',
-            'birth', 'financial_products', 'capital', 'salary',
+            'birth', 'capital', 'salary',
             'created_at', 'updated_at', 'followings', 'followers','id'
         ]
         depth = 1  # followings 필드를 위한 설정

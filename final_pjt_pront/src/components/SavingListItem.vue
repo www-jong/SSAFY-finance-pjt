@@ -13,6 +13,7 @@
     :product="product.product"
     :option="selectedOption"
     :showModal="showModal"
+    :type="modal"
     @update:showModal="showModal = $event"
   />
 </template>
@@ -21,6 +22,7 @@
 import { defineProps, ref, computed } from 'vue'
 import DepositModal from '@/components/DepositModal.vue'
 
+const modal="saving"
 const props = defineProps({
   product: Object,
 })
@@ -30,8 +32,9 @@ const selectedOption = ref(null)
 
 const getRate = (months) => {
   const option = props.product.option.find(o => o.save_trm == months)
-  return option ? `${option.intr_rate}%` : '--'
+  return option && option.intr_rate !== null ? `${option.intr_rate}%` : '--';
 }
+
 
 const showOptionModal = (months) => {
   const option = props.product.option.find(o => o.save_trm == months)

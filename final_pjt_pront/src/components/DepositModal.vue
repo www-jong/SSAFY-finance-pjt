@@ -4,12 +4,12 @@
     <div class="fixed inset-0 bg-black bg-opacity-50" @click="closeModal"></div>
 
     <!-- 모달 내용 -->
-    <div class="bg-white p-6 rounded-lg shadow-xl relative z-10 max-w-lg mx-auto">
+    <div class="bg-white p-6 rounded-lg shadow-xl relative z-10 max-w-xl mx-auto">
       <h2 class="text-2xl font-semibold mb-4">{{ product.fin_prdt_nm }}</h2>
       <p class="text-gray-600 mb-6">{{ product.kor_co_nm }}</p>
 
       <div class="my-4">
-        <h3 class="text-lg font-semibold mb-2">옵션 상세 정보</h3>
+        <h3 class="text-lg font-semibold mb-2">옵션 상세 정보 {{ product.join_user }}</h3>
         <ul>
           <li class="mb-1">저축 기간: {{ option.save_trm }}개월</li>
           <li class="mb-1">이자율: {{ option.intr_rate }}%</li>
@@ -17,22 +17,54 @@
         </ul>
       </div>
 
-      <button @click="closeModal" class="text-blue-500 hover:text-blue-700 mt-4">닫기</button>
-    </div>
+      <div class="mt-4 flex justify-end">
+        <button 
+        v-if="!isSubscribed"
+        @click="subscribe(product.code, option.save_trm)" 
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2">
+        구독하기
+      </button>
+      <button 
+        v-else 
+        @click="unsubscribe(product.code, option.save_trm)" 
+        class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mr-2">
+        구독 취소하기
+      </button>
+        <button @click="closeModal(product.code,option.save_trm)" class="text-blue-500 hover:text-blue-700">닫기</button>
+        </div>
+      </div>
   </div>
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from 'vue';
-
+import { defineProps, defineEmits,computed } from 'vue';
+import {useCounterStore} from '@/stores/counter'
 const props = defineProps({
   option: Object,
   product:Object,
   showModal: Boolean,
+  type:String
 });
+const store = useCounterStore()
 const emit = defineEmits(['update:showModal']);
 
-const closeModal = () => {
+// 사용자가 이미 구독했는지 확인
+const isSubscribed = computed(() => {
+  console.log('구독정보',props.product)
+  return props.product.join_user.includes(store.my_id);
+});
+
+const subscribe = (code, save_trm) => {
+  console.log("구독:", code, save_trm);
+  store.join_product(props.type,code)
+};
+
+const unsubscribe = (code, save_trm) => {
+  console.log("구독 취소:", code, save_trm);
+  store.join_product(props.type,code)
+};
+
+const closeModal = (code,save_trm) => {
   emit('update:showModal', false);
 };
 </script>

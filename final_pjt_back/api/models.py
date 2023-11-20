@@ -54,7 +54,6 @@ class DepositProduct(models.Model):
     join_member = models.TextField()                                                   #가입대상
     join_way =  models.TextField(null=True)                                            #가입경로
     spcl_cnd = models.TextField()                                                      #우대조건
-    sub_user = models.ManyToManyField(settings.AUTH_USER_MODEL,blank=True, related_name='subscribed_deposit_products')  #구독
     join_user = models.ManyToManyField(settings.AUTH_USER_MODEL,blank=True,  related_name='joined_deposit_products') #가입
     
 
@@ -80,7 +79,6 @@ class SavingProduct(models.Model):
     join_member = models.TextField()                                                   #가입대상
     join_way =  models.TextField(null=True)                                            #가입경로
     spcl_cnd = models.TextField()                                                      #우대조건
-    sub_user = models.ManyToManyField(settings.AUTH_USER_MODEL,blank=True, related_name='subscribed_saving_products')  #구독
     join_user = models.ManyToManyField(settings.AUTH_USER_MODEL,blank=True,  related_name='joined_saving_products') #가입
         
 class SavingOption(models.Model):

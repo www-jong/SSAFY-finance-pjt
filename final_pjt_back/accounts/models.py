@@ -7,7 +7,6 @@ class CustomUser(AbstractUser):
     image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
     gender = models.CharField(max_length=6, choices=[('male', 'Male'), ('female', 'Female')])
     birth = models.DateField()  # 생년월일 필드
-    financial_products = models.ManyToManyField('FinancialProduct', blank=True)
     capital = models.IntegerField(default=0)
     salary = models.IntegerField(default=0)
     permission = models.IntegerField(default=1)
