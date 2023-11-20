@@ -93,3 +93,15 @@ def article_like(request):
         
     print('성공')
     return Response({'message':message}, status=status.HTTP_200_OK)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def comments_delete(request, article_pk, comment_pk):
+    comment = get_object_or_404(Comment, pk=comment_pk, article_id=article_pk)
+
+    # 댓글 작성자와 현재 사용자가 같은지 확인
+    if request.user != comment.user:
+        return Response({'message': '권한이 없습니다.'}, status=status.HTTP_403_FORBIDDEN)
+
+    comment.delete()
+    return Response({'message': '댓글이 삭제되었습니다.'}, status=status.HTTP_204_NO_CONTENT)

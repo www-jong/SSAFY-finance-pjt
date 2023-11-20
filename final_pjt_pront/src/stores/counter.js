@@ -183,6 +183,28 @@ export const useCounterStore = defineStore('counter', () => {
         console.log(err)
       })
   }
+
+  const deleteComment = function (payload) {
+    return new Promise((resolve, reject) => {
+      axios({
+        method: 'delete',
+        url: `${API_URL}/boards/comment/delete/${payload.article_pk}/${payload.comment_pk}/`,
+        headers: {
+          Authorization: `Token ${token.value}`
+        }
+      })
+      .then(() => {
+        alert("댓글이 삭제되었습니다.");
+        resolve();
+      })
+      .catch(err => {
+        console.error(err);
+        alert("댓글 삭제에 실패했습니다.");
+        reject(err);
+      });
+    });
+  };
+  
   // store.js
   const get_user_data = function (search_name, errorCallback) {
     axios({
@@ -323,7 +345,6 @@ export const useCounterStore = defineStore('counter', () => {
   }
 
   const get_saving_product = function () {
- 
     axios({
       method: 'get',
       url: `${API_URL}/api/v1/save_saving_products/`,
@@ -354,8 +375,9 @@ export const useCounterStore = defineStore('counter', () => {
     getExChange,
     exchange_data,
     exchange_datetime,
-    getBoards, createArticle,
-    DetailArticle, createComments,
+    getBoards,
+    createArticle, DetailArticle,
+    createComments, deleteComment,
     my_nickname,
     get_user_data,
     search_user,
