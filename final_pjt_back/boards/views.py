@@ -39,8 +39,8 @@ def article_list(request,board_type):
         return Response({'message':'success'},status=status.HTTP_204_NO_CONTENT)
         print('DELETE')
 
-@api_view(['GET'])
-def article_detail(request,board_type ,article_pk):
+@api_view(['GET', 'DELETE'])
+def article_detail(request, board_type, article_pk):
     article = get_object_or_404(Article, pk=article_pk)
     comment= Comment.objects.filter(article=article).order_by('created_at')
     if request.method == 'GET':
@@ -49,6 +49,12 @@ def article_detail(request,board_type ,article_pk):
         print('게시글들',ar_serializer.data)
         print('댓글들',co_serializer.data,article_pk)
         return Response({'article':ar_serializer.data,'comments':co_serializer.data})
+    if request.method == 'DELETE':
+        article = get_object_or_404(Article, pk=article_pk)
+        if request.user != article.user:
+            return Response({'message': '권한이 없습니다.'}, status=status.HTTP_403_FORBIDDEN)
+        article.delete()
+        return Response({'message': '게시글이 삭제되었습니다.'}, status=status.HTTP_204_NO_CONTENT)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -93,6 +99,20 @@ def article_like(request):
         
     print('성공')
     return Response({'message':message}, status=status.HTTP_200_OK)
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def comment_update(request, article_pk, comment_pk):
+    comment = get_object_or_404(Comment, pk=comment_pk, article_id=article_pk)
+
+    if request.user != comment.user:
+        return Response({'message': '권한이 없습니다.'}, status=status.HTTP_403_FORBIDDEN)
+
+    serializer = CommentSerializer(comment, data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])

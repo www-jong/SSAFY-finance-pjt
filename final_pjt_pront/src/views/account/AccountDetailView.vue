@@ -34,7 +34,7 @@
         로딩중...
     </div>
 </template>
-  
+
 <script setup>
 import { computed, ref, watch, onMounted } from 'vue';
 import { useCounterStore } from '@/stores/counter';
