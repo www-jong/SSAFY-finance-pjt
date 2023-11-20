@@ -30,7 +30,7 @@
         class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mr-2">
         구독 취소하기
       </button>
-        <button @click="closeModal(product.code,option.save_trm)" class="text-blue-500 hover:text-blue-700">닫기</button>
+        <button @click="closeModal()" class="text-blue-500 hover:text-blue-700">닫기</button>
         </div>
       </div>
   </div>
@@ -39,6 +39,8 @@
 <script setup>
 import { defineProps, defineEmits,computed } from 'vue';
 import {useCounterStore} from '@/stores/counter'
+import { routerKey,useRouter } from 'vue-router';
+const router = useRouter()
 const props = defineProps({
   option: Object,
   product:Object,
@@ -57,14 +59,18 @@ const isSubscribed = computed(() => {
 const subscribe = (code, save_trm) => {
   console.log("구독:", code, save_trm);
   store.join_product(props.type,code)
+  closeModal()
+  router.go(0);
 };
 
 const unsubscribe = (code, save_trm) => {
   console.log("구독 취소:", code, save_trm);
   store.join_product(props.type,code)
+  closeModal()
+  router.go(0);
 };
 
-const closeModal = (code,save_trm) => {
+const closeModal = () => {
   emit('update:showModal', false);
 };
 </script>

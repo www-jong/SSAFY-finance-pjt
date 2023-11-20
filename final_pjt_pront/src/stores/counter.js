@@ -401,8 +401,7 @@ export const useCounterStore = defineStore('counter', () => {
     })
       .then(res => {
         //alert("예금조회완");
-        console.log('예금가입 완')
-        router.push({ name: 'FinanceProductView' })
+        console.log('가입 완')
       })
       .catch(err => {
         console.error(err);
