@@ -33,13 +33,15 @@
         <div class="space-y-4">
           <div v-for="comment in filteredComments" :key="comment.id" class="bg-gray-100 p-3 rounded-lg">
             <p class="font-semibold">{{ comment.user.username }} ({{ comment.user.nickname }})</p>
-            <p>{{ comment.content }}</p>
+            <p>{{ comment.content }}</p>            
             <p class="text-sm text-gray-600">{{ formatDate(comment.created_at) }}</p>
-
             <!-- 대댓글 작성 버튼 -->
             <button @click="toggleReplyForm(comment.id)" class="mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">대댓글 작성</button>
 
-            <!-- 대댓글 작성 영역 -->
+            <!-- 댓글 삭제 버튼 -->
+            <button v-if="isCommentOwner(comment)" @click="deleteComment(comment)" class="mt-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">댓글 삭제{{comment.id}}</button>
+
+            <!-- 대댓글 작성 영역 -->            
             <div v-if="comment.showReplyForm" class="mt-2">
               <textarea v-model.trim="comment.newReply" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="대댓글을 입력하세요"></textarea>
               <button @click="submitReply(comment.id)" class="mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">대댓글 작성</button>
@@ -109,6 +111,7 @@ const submitComment = (parent_pk) => {
     alert('댓글 내용을 입력해주세요.');
     return;
   }
+  const maxId = comments.value.reduce((max, comment) => Math.max(max, comment.id), 0);
   const newCommentObject = {
     article_pk: route.params.article_pk,
     content: newComment.value,
@@ -116,16 +119,16 @@ const submitComment = (parent_pk) => {
     parent_comment: parent_pk === 0 ? null : parent_pk,
     user:{username:store.my_username,nickname:store.my_nickname},
     created_at:'now',
-    id:'temp'
+    id:maxId+1
 
   };
-
   store.createComments({
     article_pk: route.params.article_pk,
     content: newComment.value,
     parent_pk:parent_pk
   })
   comments.value.push(newCommentObject)
+  router.go(0)
   newComment.value=''
 }
 
@@ -179,15 +182,37 @@ const toggleCommentLike = (comment) => {
 
 // 게시글 삭제
 const deleteArticle = () => {
-  if (confirm("이 작업을 수행하시겠습니까?")) {
+  if (confirm("게시글을 삭제하시겠습니까?")) {
     // 사용자가 '확인'을 클릭한 경우의 로직
     
     console.log("작업 수행");
     store.aritlce_delete(route.params.board_type,route.params.article_pk)
+
+    router.go(0)
 } else {
     // 사용자가 '취소'를 클릭한 경우의 로직
     console.log("작업 취소");
 }
+};
+
+// 댓글 삭제
+const deleteComment = (comment) => {
+  if (confirm("댓글을 삭제하시겠습니까?")) {
+    const payload = {
+      article_pk: article.value.id, // 현재 게시글의 ID
+      comment_pk: comment.id       // 삭제할 댓글의 ID
+    };
+
+    store.deleteComment(payload)
+      .then(() => {
+        // 성공적으로 삭제된 댓글을 목록에서 제거
+        comments.value = comments.value.filter(c => c.id !== comment.id);
+        router.go(0)
+      })
+      .catch(err => {
+        console.error("댓글 삭제 실패:", err);
+      });
+  }
 };
 
 // 뒤로 가기
@@ -199,6 +224,11 @@ const goBack = () => {
 const isArticleOwner = computed(() => {
   return article.value && store.my_username === article.value.user.username;
 });
+
+// 댓글 작성자 확인
+const isCommentOwner = (comment) => {
+  return comment.user.username === store.my_username;
+};
 </script>
 
 <style>

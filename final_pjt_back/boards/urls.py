@@ -7,4 +7,5 @@ urlpatterns = [
     path('<str:board_type>/', views.article_list),
     path('<str:board_type>/<int:article_pk>/', views.article_detail),
     path('article/like/', views.article_like),
+    path('comment/delete/<int:article_pk>/<int:comment_pk>/', views.comments_delete),
 ]
