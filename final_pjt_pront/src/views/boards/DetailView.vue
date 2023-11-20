@@ -32,19 +32,32 @@
         <h2 class="text-xl font-bold mb-3">댓글 목록</h2>
         <div class="space-y-4">
           <div v-for="comment in filteredComments" :key="comment.id" class="bg-gray-100 p-3 rounded-lg">
+            <!-- 댓글 수정 영역 -->
+            <div v-if="comment.editMode" class="mt-2">
+              <textarea v-model="comment.editContent" class="w-full p-2 border rounded"></textarea>
+              <button @click="saveEdit(comment)" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">저장</button>
+            </div>
             <p class="font-semibold">{{ comment.user.username }} ({{ comment.user.nickname }})</p>
             <p>{{ comment.content }}</p>            
             <p class="text-sm text-gray-600">{{ formatDate(comment.created_at) }}</p>
             <!-- 대댓글 작성 버튼 -->
-            <button @click="toggleReplyForm(comment.id)" class="mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">대댓글 작성</button>
+            <!-- <button @click="toggleReplyForm(comment.id)" class="mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">대댓글 작성</button> -->
+
+            <!-- 댓글 수정 버튼 -->
+            <button v-if="isCommentOwner(comment)" @click="editComment(comment)" class="mt-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">댓글 수정</button>
 
             <!-- 댓글 삭제 버튼 -->
-            <button v-if="isCommentOwner(comment)" @click="deleteComment(comment)" class="mt-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">댓글 삭제{{comment.id}}</button>
+            <button v-if="isCommentOwner(comment)" @click="deleteComment(comment)" class="mt-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">댓글 삭제</button>
+
+            <!-- 대댓글 작성 버튼 -->
+            <p class="text-right">
+              <button @click="toggleReplyForm(comment.id)" class="mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">답글 작성</button>
+            </p>
 
             <!-- 대댓글 작성 영역 -->            
-            <div v-if="comment.showReplyForm" class="mt-2">
+            <div v-if="comment.showReplyForm" class="mt-2 text-right">
               <textarea v-model.trim="comment.newReply" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="대댓글을 입력하세요"></textarea>
-              <button @click="submitReply(comment.id)" class="mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">대댓글 작성</button>
+              <button @click="submitReply(comment.id)" class="mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">등록</button>
             </div>
 
             <!-- 대댓글 목록 -->
@@ -91,12 +104,12 @@ const formatDate = (dateString) => {
 
 
 onMounted(() => {
-  const payload={
-    board_type:route.params.board_type,
-    article_pk:route.params.article_pk
-  }
-  store.DetailArticle(payload)
-})
+  const payload = {
+    board_type: route.params.board_type,
+    article_pk: route.params.article_pk
+  };
+  store.DetailArticle(payload);
+});
 const article= computed(() => store.article)
 const comments = computed(() => store.comments)
 const filteredComments = computed(() => {
@@ -180,19 +193,43 @@ const toggleCommentLike = (comment) => {
   // 응답에 따라 comment.like_users 및 comment.isLikedByCurrentUser 업데이트
 };
 
+// 댓글 수정
+const editComment = (comment) => {
+  comment.editMode = true;
+  comment.editContent = comment.content;
+};
+
+const saveEdit = (comment) => {
+  if (comment.editContent && comment.editContent !== comment.content) {
+    store.updateComment({
+      article_pk: article.value.id,
+      comment_pk: comment.id,
+      content: comment.editContent
+    }).then(() => {
+      comment.content = comment.editContent;
+      comment.editMode = false;
+    }).catch(err => {
+      console.error("댓글 수정 실패:", err);
+      alert("댓글 수정에 실패했습니다.");
+    });
+  }
+};
+
 // 게시글 삭제
 const deleteArticle = () => {
   if (confirm("게시글을 삭제하시겠습니까?")) {
-    // 사용자가 '확인'을 클릭한 경우의 로직
-    
-    console.log("작업 수행");
-    store.aritlce_delete(route.params.board_type,route.params.article_pk)
-
-    router.go(0)
-} else {
-    // 사용자가 '취소'를 클릭한 경우의 로직
-    console.log("작업 취소");
-}
+    console.log("게시글 삭제 작업 시작");
+    store.article_delete(route.params.board_type, article.value.id) // 여기 수정
+    .then(() => {
+      console.log("게시글 삭제 성공");
+      router.push({ name: 'BoardView', params: { board_type: route.params.board_type } });
+    })
+    .catch(err => {
+      console.error("게시글 삭제 실패:", err);
+    });
+  } else {
+    console.log("게시글 삭제 작업 취소");
+  }
 };
 
 // 댓글 삭제

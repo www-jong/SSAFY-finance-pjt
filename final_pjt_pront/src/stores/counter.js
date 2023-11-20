@@ -184,11 +184,32 @@ export const useCounterStore = defineStore('counter', () => {
       })
   }
 
+  const updateComment = function (payload) {
+    return axios({
+      method: 'put',
+      url: `${API_URL}/boards/comment/${payload.article_pk}/${payload.comment_pk}/update/`,
+      data: { content: payload.content },
+      headers: {
+        Authorization: `Token ${token.value}`
+      }
+    })
+    .then(response => {
+      // 서버 응답으로 댓글 데이터 업데이트
+      const updatedIndex = comments.value.findIndex(c => c.id === payload.comment_pk);
+      if (updatedIndex !== -1) {
+        comments.value[updatedIndex].content = response.data.content; // 댓글 내용 업데이트
+      }
+    })
+    .catch(err => {
+      console.error("댓글 수정 실패:", err);
+    });
+  };
+
   const deleteComment = function (payload) {
     return new Promise((resolve, reject) => {
       axios({
         method: 'delete',
-        url: `${API_URL}/boards/comment/delete/${payload.article_pk}/${payload.comment_pk}/`,
+        url: `${API_URL}/boards/comment/${payload.article_pk}/${payload.comment_pk}/delete/`,
         headers: {
           Authorization: `Token ${token.value}`
         }
@@ -279,25 +300,22 @@ export const useCounterStore = defineStore('counter', () => {
       })
   }
 
-  const aritlce_delete = function (board_type, article_id) {
+  const article_delete = function (board_type, article_id) {
     axios({
       method: 'delete',
-      url: `${API_URL}/boards/${board_type}/`,
-      data: {
-        article_id: article_id,
-      },
+      url: `${API_URL}/boards/${board_type}/${article_id}/`,
       headers: {
         Authorization: `Token ${token.value}`
       }
     })
-      .then(() => {
-        alert("게시글이 삭제되었습니다.");
-        router.push({ name: 'BoardView', params: { board_type: board_type } });
-      })
-      .catch(err => {
-        console.error(err);
-        alert("게시글 삭제에 실패했습니다.");
-      });
+    .then(() => {
+      alert("게시글이 삭제되었습니다.");
+      router.push({ name: 'BoardView', params: { board_type } });
+    })
+    .catch(err => {
+      console.error(err);
+      alert("게시글 삭제에 실패했습니다.");
+    });
   }
 
   const account_delete = function () {
@@ -377,13 +395,13 @@ export const useCounterStore = defineStore('counter', () => {
     exchange_datetime,
     getBoards,
     createArticle, DetailArticle,
-    createComments, deleteComment,
+    createComments, updateComment, deleteComment,
     my_nickname,
     get_user_data,
     search_user,
     followUser,
     article_like,
-    aritlce_delete,
+    article_delete,
     account_delete,
     get_deposit_product,
     deposit_products,
