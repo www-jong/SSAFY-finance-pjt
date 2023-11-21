@@ -1,5 +1,6 @@
 <template>
   <div class="max-w-xl mx-auto p-4 bg-white shadow-lg rounded-lg">
+    
     <h3 class="text-xl font-semibold text-blue-700 mb-6">환율정보</h3>
     <hr class="mb-6 border-blue-300">
     <div>
@@ -24,16 +25,19 @@
         <input v-model="to_money" @input="updateToMoney($event.target.value)" class="mt-3 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500" placeholder="금액 입력">
       </div>
     </div>
+    <LoadingPage v-if="store.loading" />
+    <div v-else>
     <div v-for="data in store.exchange_data" :key="data.cur_nm" class="mt-6">
       <ExChangeItem :data="data"/>
     </div>
+  </div>
   </div>
 </template>
 <script setup>
 import ExChangeItem from '@/components/ExChangeItem.vue'
 import {useCounterStore} from '@/stores/counter'
 import { ref, watch } from 'vue';
-
+import LoadingPage from '@/components/LoadingPage.vue';
 const store = useCounterStore()
 const from_exchange = ref('')
 const to_exchange = ref('')

@@ -20,8 +20,9 @@ export const useCounterStore = defineStore('counter', () => {
   const search_user_articles= ref('')
   const search_user_comments= ref('')
   const join_deposit_products=ref('')
+  const search_user_products = ref('')
   const join_saving_products=ref('')
-  
+  const loading=ref(false)
   const deposit_products = ref([])
   const saving_products = ref([])
   const isLogin = computed(() => {
@@ -92,6 +93,7 @@ export const useCounterStore = defineStore('counter', () => {
   }
 
   const getExChange = function () {
+    loading.value=true
     axios({
       method: 'get',
       url: `${API_URL}/api/v1/exchange/`,
@@ -100,6 +102,7 @@ export const useCounterStore = defineStore('counter', () => {
         exchange_data.value = res.data.data
         exchange_datetime.value = res.data.datetime
         console.log(res.data)
+        loading.value=false
       })
       .catch(err => console.log(err))
   }
@@ -243,7 +246,7 @@ export const useCounterStore = defineStore('counter', () => {
           search_user.value = res.data.user_data;
           search_user_comments.value=res.data.user_comments
           search_user_articles.value=res.data.user_articles
-          
+          search_user_products.value=res.data.user_products
         
         } else {
           alert('없는 사용자입니다.')
@@ -353,6 +356,7 @@ export const useCounterStore = defineStore('counter', () => {
       });
   }
   const get_deposit_product = function () {
+    loading.value=true
     console.log(token.value)
     axios({
       method: 'get',
@@ -362,6 +366,7 @@ export const useCounterStore = defineStore('counter', () => {
         //alert("예금조회완");
         console.log('예금조회 완')
         console.log(res.data.data)
+        loading.value=false
         deposit_products.value = res.data.data
         console.log(res.data.data)
         //router.push({ name: 'HomeView' })
@@ -373,6 +378,7 @@ export const useCounterStore = defineStore('counter', () => {
   }
 
   const get_saving_product = function () {
+    loading.value=true
     axios({
       method: 'get',
       url: `${API_URL}/api/v1/save_saving_products/`,
@@ -380,7 +386,9 @@ export const useCounterStore = defineStore('counter', () => {
       .then(res => {
         //alert("예금조회완");
         console.log('적금조회 완')
+        loading.value=false
         saving_products.value = res.data.data
+        console.log(saving_products.value)
         //router.push({ name: 'HomeView' })
       })
       .catch(err => {
@@ -389,6 +397,7 @@ export const useCounterStore = defineStore('counter', () => {
       });
   }
   const join_product = function (type,code) {
+    //loading.value=true
     axios({
       method: 'post',
       url: `${API_URL}/api/v1/join_${type}_product/`,
@@ -401,7 +410,21 @@ export const useCounterStore = defineStore('counter', () => {
     })
       .then(res => {
         //alert("예금조회완");
+        if (type === 'deposit') {
+          const index = deposit_products.value.findIndex(product => product.code === code);
+          console.log('dd')
+          if (index !== -1) {
+            deposit_products.value[index] = res.data.data;
+            console.log('찾음')
+          }
+        } else {
+          const index = saving_products.value.findIndex(product => product.code === code);
+          if (index !== -1) {
+            saving_products.value[index] = res.data.data;
+          }
+        }
         console.log('가입 완')
+        loading.value=true
       })
       .catch(err => {
         console.error(err);
@@ -439,6 +462,8 @@ export const useCounterStore = defineStore('counter', () => {
     get_saving_product,
     search_user_comments,
     search_user_articles,
-    join_product
+    join_product,
+    loading,
+    search_user_products
   }
 }, { persist: true })

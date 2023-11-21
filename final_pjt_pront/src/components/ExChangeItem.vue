@@ -1,11 +1,11 @@
 <template>
-  <div>
-    <h5>{{ data.cur_nm }}</h5>
-    <p>{{ data.ttb }}</p>
-    <p>{{ data.tts }}</p>
-    <p>{{ data.deal_bas_r }}</p>
+  <div class="p-4 bg-white shadow-md rounded-lg">
+    <h5 class="text-lg font-semibold text-gray-700">{{ data.cur_nm }}</h5>
+    <p class="text-gray-600">{{ data.ttb }}</p>
+    <p class="text-gray-600">{{ data.tts }}</p>
+    <p class="text-gray-600">{{ data.deal_bas_r }}</p>
   </div>
-  <hr>
+  <hr class="my-4">
 </template>
 
 <script setup>

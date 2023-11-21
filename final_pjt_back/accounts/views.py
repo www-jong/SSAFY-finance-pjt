@@ -11,7 +11,7 @@ from .models import CustomUser
 from rest_framework.decorators import permission_classes
 from boards.models import Article,Comment
 from boards.serializers import ArticleSerializer,CommentSerializer
-
+from api.serializers import DepositOptionSerializer,DepositProductSerializer
 @api_view(['GET'])
 def Detail(request, search_name):
     try:
@@ -21,9 +21,14 @@ def Detail(request, search_name):
         print('!!!',user)
         user_articles=ArticleSerializer(Article.objects.filter(user=user),many=True)
         user_comments=CommentSerializer(Comment.objects.filter(user=user),many=True)
-
-            
-        result={'message':'success','user_articles': user_articles.data, 'user_comments': user_comments.data,'user_data':serializer.data}
+        user_products=user.joined_deposit_products.all()
+        return_product_and_option=[]
+        for item in user_products:
+            options=item.option.all()
+            print(DepositProductSerializer(item).data)
+            return_product_and_option.append({'product':DepositProductSerializer(item).data,'option':DepositOptionSerializer(options,many=True).data})
+        print(return_product_and_option)
+        result={'message':'success','user_articles': user_articles.data, 'user_comments': user_comments.data,'user_data':serializer.data,'user_products':return_product_and_option}
         return Response(result, status=status.HTTP_200_OK)
     except:
         return Response({'message':'error'}, status=status.HTTP_404_NOT_FOUND)
