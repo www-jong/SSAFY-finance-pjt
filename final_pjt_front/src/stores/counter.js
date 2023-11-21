@@ -34,6 +34,7 @@ export const useCounterStore = defineStore('counter', () => {
   })
   const parseErrorMessages = (errorResponse) => {
     let messages = [];
+    console.log('에러출력',errorResponse)
     const data = JSON.parse(errorResponse);
     if (data && typeof data === 'object') {
       // 각 필드에 대한 에러 메시지를 배열에 추가합니다.
@@ -472,6 +473,7 @@ export const useCounterStore = defineStore('counter', () => {
         alert("예금가입 에러.");
       });
   }
+
   return {
     articles,
     article,

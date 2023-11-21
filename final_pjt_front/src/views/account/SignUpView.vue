@@ -53,11 +53,11 @@
                         </div>
 
                         <div class="flex flex-col pt-4">
-                            <label class="block text-gray-700 text-sm font-bold mb-2" for="email">Email</label>
-                            <input type="email" id="email" v-model.trim="email"
-                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                required>
-                        </div>
+    <label class="block text-gray-700 text-sm font-bold mb-2" for="email">Email</label>
+    <input type="email" id="email" v-model.trim="email"
+           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+           required>
+</div>
                         <!-- Nickname Field -->
                         <div class="flex flex-col pt-4">
                             <label class="block text-gray-700 text-sm font-bold mb-2" for="nickname">Nickname</label>
@@ -68,7 +68,7 @@
 
                         <div class="flex flex-col pt-4">
                             <label class="block text-gray-700 text-sm font-bold mb-2" for="birth">Birth Date</label>
-                            <input type="date" max="2999-12-31" id="birth" v-model="birth" @input="handleBirthInput"
+                            <input type="date" max="2008-12-31" id="birth" v-model="birth" @input="handleBirthInput"
                                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                 required>
                         </div>
@@ -85,19 +85,22 @@
                             </select>
                         </div>
 
-                        <!-- Capital Field (Optional) -->
-                        <div class="flex flex-col pt-4">
-                            <label class="block text-gray-700 text-sm font-bold mb-2" for="capital">Capital</label>
-                            <input type="number" id="capital" v-model.number="capital"
-                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                        </div>
+<!-- Capital Field (Optional) -->
+<div class="flex flex-col pt-4 relative">
+    <label for="capital" class="block text-gray-700 text-sm font-bold mb-2">자산</label>
+    <input type="number" id="capital" v-model.number="capital" @input="validateCurrency"
+           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+    <span class="currency-label" v-if="capital">원(₩)</span>
+</div>
 
-                        <!-- Salary Field (Optional) -->
-                        <div class="flex flex-col pt-4">
-                            <label class="block text-gray-700 text-sm font-bold mb-2" for="salary">Salary</label>
-                            <input type="number" id="salary" v-model.number="salary"
-                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                        </div>
+<!-- Salary Field (Optional) -->
+<div class="flex flex-col pt-4 relative">
+    <label for="salary" class="block text-gray-700 text-sm font-bold mb-2">소득</label>
+    <input type="number" id="salary" v-model.number="salary" @input="validateCurrency"
+           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+    <span class="currency-label" v-if="salary">원(₩)</span>
+</div>
+
 
 
                         <input type="submit" value="SignUp"
@@ -132,24 +135,27 @@ const email = ref('')
 const nickname = ref('');
 const birth = ref('');
 const gender = ref('');
-const capital = ref(null); // 선택 필드
-const salary = ref(null); // 선택 필드
+const capital = ref(0); // 선택 필드
+const salary = ref(0); // 선택 필드
 
 const isPasswordValid = computed(() => password1.value.length === 0 || (/[a-zA-Z]/.test(password1.value) && /[0-9]/.test(password1.value)));
 const isPasswordMatch = computed(() => password2.value.length === 0 || password1.value === password2.value);
-
 const store = useCounterStore();
-
+const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 const signUp = () => {
+    if (!emailRegex.test(email.value)) {
+        alert("올바른 이메일 형식이 아닙니다.");
+        email.value = ''; // 입력 필드 비우기
+        return
+    }
     if (!isPasswordValid.value) {
-        alert("Password must include both letters and numbers.");
+        alert("비밀번호는 적어도 한개 이상의 문자, 한개 이상의 숫자가 있어야 합니다.");
         return;
     }
     if (!isPasswordMatch.value) {
-        alert("Passwords do not match.");
+        alert("비밀번호가 일치하지 않습니다.");
         return;
     }
-    console.log('birth!!', birth)
     const payload = {
         username: username.value,
         password1: password1.value,
@@ -163,6 +169,19 @@ const signUp = () => {
     };
     store.signUp(payload);
 }
+
+const MAX_CURRENCY_VALUE = 10000000000; // 최대값 설정
+
+
+const validateCurrency = (event) => {
+    const value = event.target.valueAsNumber;
+    if (value > MAX_CURRENCY_VALUE) {
+        alert("10000000000 이하의 값만 입력할 수 있습니다.");
+        event.target.value = 0; // 입력 필드 비우기
+    }
+};
+
+
 </script>
 
 <style>
@@ -170,5 +189,12 @@ const signUp = () => {
 
 .font-family-karla {
     font-family: karla;
+}
+.currency-label {
+    position: absolute;
+    right: 40px;
+    top: 53px;
+    font-size: 0.875rem;
+    color: #4a5568;
 }
 </style>

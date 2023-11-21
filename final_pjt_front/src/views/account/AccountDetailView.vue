@@ -34,7 +34,7 @@
                         </div>
                     </div>
                     <div class="space-x-8 flex justify-between mt-32 md:mt-0 md:justify-center">
-                        <button v-if="isCurrentUser" @click="editProfile"
+                        <button v-if="isCurrentUser" @click="openModal"
                             class="text-white py-2 px-4 uppercase rounded bg-blue-400 hover:bg-blue-500 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5">
                             Edit Profile</button> <button
                             class="text-white py-2 px-4 uppercase rounded bg-gray-700 hover:bg-gray-800 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5">
@@ -123,13 +123,21 @@
     <div v-else class="text-center">
         로딩중...
     </div>
+
+    <AccountEditModal
+      v-if="isModalOpen"
+      :user="filteredsearch_user"
+      @save="saveProfile"
+      @cancel="closeModal"
+    />
 </template>
 
 <script setup>
-import { computed, ref, watch, onMounted } from 'vue';
+import { computed,reactive, ref, watch, onMounted } from 'vue';
 import { useCounterStore } from '@/stores/counter';
 import { useRoute, useRouter } from 'vue-router';
 import myProductListItem from '@/components/myProductListItem.vue';
+import AccountEditModal from '@/components/AccountEditModal.vue'
 import { Chart } from 'chart.js';
 import ChartComponent from '@/components/ChartComponent.vue';
 const route = useRoute();
@@ -150,7 +158,7 @@ const filteredsearch_user = computed(() => store.search_user);
 //});
 
 const editProfile = () => {
-    // 프로필 수정 로직
+    openEditModal
 
 };
 
@@ -221,6 +229,22 @@ const handleChecked = ({ product, isChecked }) => {
     }
 };
 
+
+const isModalOpen = ref(false);
+
+const openModal = () => {
+  isModalOpen.value = true;
+};
+
+const closeModal = () => {
+    console.log('닫아')
+  isModalOpen.value = false;
+};
+
+const saveProfile = (editedUser) => {
+  console.log('프로필 업데이트:', editedUser);
+  closeModal();
+};
 
 </script>
   
