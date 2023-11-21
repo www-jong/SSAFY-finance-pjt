@@ -170,6 +170,32 @@ export const useCounterStore = defineStore('counter', () => {
       })
   }
 
+  const updateArticle = function (payload) {
+    console.log(payload)
+    return axios({
+      method: 'put',
+      url: `${API_URL}/boards/${payload.board_type}/${payload.article_pk}/update/`,
+      data: {
+        title: payload.title,
+        content: payload.content,
+        board_type:payload.board_type
+      },
+      headers: {
+        Authorization: `Token ${token.value}`,
+      }
+    })
+    .then(response => {
+      // 서버 응답으로 게시글 데이터 업데이트
+      if (response.data && article.value.id === payload.article_pk) {
+        article.value.title = response.data.title;
+        article.value.content = response.data.content;
+        // 여기서 필요한 다른 게시글 정보도 업데이트 가능
+      }
+    })
+    .catch(err => {
+      console.error("게시글 수정 실패:", err);
+    });
+  };
 
   const createComments = function (payload) {
     console.log('router', payload)
@@ -447,7 +473,7 @@ export const useCounterStore = defineStore('counter', () => {
     exchange_data,
     exchange_datetime,
     getBoards,
-    createArticle, DetailArticle,
+    createArticle, DetailArticle, updateArticle,
     createComments, updateComment, deleteComment,
     my_nickname,
     get_user_data,

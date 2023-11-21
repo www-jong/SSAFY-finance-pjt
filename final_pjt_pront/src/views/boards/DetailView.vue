@@ -5,27 +5,52 @@
     <!-- 뒤로 가기 버튼 -->
     <button @click="goBack" class="mb-6 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">뒤로 가기</button>
 
+    <hr>
     <div v-if="article && article.user" class="bg-white p-4 rounded-lg shadow-md">
-      <p class="text-md text-gray-700"><span class="font-semibold">작성자:</span> {{ article.user.username }} <span class="font-semibold">별명:</span> {{ article.user.nickname }}</p>
-      <p class="text-lg font-bold text-gray-900 mt-2">제목: {{ article.title }}</p>
-      <p class="text-gray-600 mt-2">내용: {{ article.content }}</p>
-      <p class="text-sm text-gray-500 mt-2">작성일: {{ article.created_at }}</p>
-      <p class="text-sm text-gray-500 mt-2">수정일: {{ article.updated_at }}</p>
+      <p class="text-sm text-gray-700 text-right"><span class="font-semibold">작성자:</span> {{ article.user.username }} <span class="font-semibold">별명:</span> {{ article.user.nickname }}</p>
+      <p class="text-2xl font-bold text-gray-900 mt-2">제목: {{ article.title }}</p>
+      <hr>
+      <p class="text-lg text-gray-600 mt-2">내용: {{ article.content }}</p>
+      <br>
+      <br>
+      <hr>
+      <p class="text-xs text-gray-500 mt-2 text-right">작성일: {{ article.created_at }}</p>
+      <p class="text-xs text-gray-500 mt-2 text-right">수정일: {{ article.updated_at }}</p>
 
-      <!-- 좋아요 버튼 -->
-      <button @click="toggleArticleLike" class="mb-6 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-        좋아요 {{ article.like_users.length }}
-      </button>
+      <div>
+        <!-- 좋아요 버튼 -->
+        <button @click="toggleArticleLike" class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          좋아요 {{ article.like_users.length }}
+        </button>
+        <!-- 게시글 삭제 버튼 -->
+        <button v-if="isArticleOwner" @click="deleteArticle" class="mt-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" style="float: right">게시글 삭제</button>
+        <!-- 게시글 수정 버튼 -->
+        <button v-if="isArticleOwner" @click="editArticle" class="mt-4 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" style="float: right">게시글 수정</button>
+      </div>
 
-      <!-- 게시글 삭제 버튼 -->
-      <button v-if="isArticleOwner" @click="deleteArticle" class="mt-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">게시글 삭제</button>
+      <!-- 게시글 수정 폼 -->
+      <div v-if="editArticleMode" class="mt-4">
+        <input v-model="editArticleTitle" type="text" class="w-full p-2 border rounded mb-2">
+        <textarea v-model="editArticleContent" class="w-full p-2 border rounded" style="height: 300px"></textarea>
+        <div class="text-right">
+          <button @click="updateArticle" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">저장</button>
+        </div>
+      </div>
+
+      <br>
+      <hr>
 
       <!-- 댓글 작성 폼 -->
       <div class="mt-6">
         <h2 class="text-xl font-bold mb-3">댓글 작성하기</h2>
         <textarea v-model.trim="newComment" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="댓글을 입력하세요"></textarea>
-        <button @click="submitComment(0)" class="mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">댓글 작성</button>
+        <div class="text-right">
+          <button @click="submitComment(0)" class="mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">댓글 작성</button>
+        </div>
       </div>
+
+      <br>
+      <hr>
 
       <!-- 댓글 목록 -->
       <div class="mt-6">
@@ -37,31 +62,30 @@
               <textarea v-model="comment.editContent" class="w-full p-2 border rounded"></textarea>
               <button @click="saveEdit(comment)" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">저장</button>
             </div>
+
             <p class="font-semibold">{{ comment.user.username }} ({{ comment.user.nickname }})</p>
             <p>{{ comment.content }}</p>            
             <p class="text-sm text-gray-600">{{ formatDate(comment.created_at) }}</p>
+
+            <div class="text-right">
+              <!-- 댓글 수정 버튼 -->
+              <button v-if="isCommentOwner(comment)" @click="editComment(comment)" class="mt-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">댓글 수정</button>
+
+              <!-- 댓글 삭제 버튼 -->
+              <button v-if="isCommentOwner(comment)" @click="deleteComment(comment)" class="mt-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">댓글 삭제</button>
+            </div>
+
             <!-- 대댓글 작성 버튼 -->
-            <!-- <button @click="toggleReplyForm(comment.id)" class="mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">대댓글 작성</button> -->
-
-            <!-- 댓글 수정 버튼 -->
-            <button v-if="isCommentOwner(comment)" @click="editComment(comment)" class="mt-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">댓글 수정</button>
-
-            <!-- 댓글 삭제 버튼 -->
-            <button v-if="isCommentOwner(comment)" @click="deleteComment(comment)" class="mt-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">댓글 삭제</button>
-
-            <!-- 대댓글 작성 버튼 -->
-            <p class="text-right">
-              <button @click="toggleReplyForm(comment.id)" class="mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">답글 작성</button>
-            </p>
+            <button @click="toggleReplyForm(comment.id)" class="mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">답글 작성</button>
 
             <!-- 대댓글 작성 영역 -->            
             <div v-if="comment.showReplyForm" class="mt-2 text-right">
-              <textarea v-model.trim="comment.newReply" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="대댓글을 입력하세요"></textarea>
+              <textarea v-model.trim="comment.newReply" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="답글을 입력하세요"></textarea>
               <button @click="submitReply(comment.id)" class="mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">등록</button>
             </div>
 
             <!-- 대댓글 목록 -->
-            <div class="space-y-2">
+            <div class="mt-2 space-y-2">
               <div v-for="reply in filteredReply.filter(c => c.parent_comment === comment.id)" :key="reply.id" class="bg-gray-200 p-2 rounded-lg ml-4">
                 <p class="font-semibold">{{ reply.user.username }} ({{ reply.user.nickname }})</p>
                 <p>{{ reply.content }}</p>
@@ -191,6 +215,50 @@ const toggleCommentLike = (comment) => {
   // 서버에 댓글 좋아요 상태를 토글하는 요청 보내기
   // 예: axios.post(...)
   // 응답에 따라 comment.like_users 및 comment.isLikedByCurrentUser 업데이트
+};
+
+// 게시글 수정
+
+const editArticleMode = ref(false);
+const editArticleTitle = ref("");
+const editArticleContent = ref("");
+
+const updateArticle = () => {
+  if (!editArticleTitle.value.trim() || !editArticleContent.value.trim()) {
+    alert('게시글의 제목과 내용을 입력해주세요.');
+    return;
+  }
+
+  store.updateArticle({
+    board_type: route.params.board_type,
+    article_pk: route.params.article_pk,
+    title: editArticleTitle.value,
+    content: editArticleContent.value
+  }).then(() => {
+    // 수정 성공 시 처리
+    alert("게시글이 성공적으로 수정되었습니다.");
+
+    // 수정 모드 종료
+    editArticleMode.value = false;
+
+    // 수정된 게시글의 제목과 내용을 로컬 상태에 반영
+    article.value.title = editArticleTitle.value;
+    article.value.content = editArticleContent.value;
+
+    // 선택적: 게시글 상세 페이지로 리디렉션하거나 페이지 새로고침
+    // router.push({ name: 'ArticleDetail', params: { board_type: route.params.board_type, article_pk: route.params.article_pk } });
+    // 또는
+    // window.location.reload();
+  }).catch(err => {
+    console.error("게시글 수정 실패:", err);
+    alert("게시글 수정에 실패했습니다.");
+  });
+};
+
+const editArticle = () => {
+  editArticleMode.value = true;
+  editArticleTitle.value = article.value.title;
+  editArticleContent.value = article.value.content;
 };
 
 // 댓글 수정
