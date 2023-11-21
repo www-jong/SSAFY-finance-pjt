@@ -11,7 +11,8 @@ from .models import CustomUser
 from rest_framework.decorators import permission_classes
 from boards.models import Article,Comment
 from boards.serializers import ArticleSerializer,CommentSerializer
-from api.serializers import DepositOptionSerializer,DepositProductSerializer
+from api.serializers import DepositOptionSerializer,DepositProductSerializer,SavingProductSerializer,SavingOptionSerializer
+
 @api_view(['GET'])
 def Detail(request, search_name):
     try:
@@ -27,6 +28,12 @@ def Detail(request, search_name):
             options=item.option.all()
             print(DepositProductSerializer(item).data)
             return_product_and_option.append({'product':DepositProductSerializer(item).data,'option':DepositOptionSerializer(options,many=True).data})
+        
+        user_products=user.joined_saving_products.all()
+        for item in user_products:
+            options=item.option.all()
+            print(SavingProductSerializer(item).data)
+            return_product_and_option.append({'product':SavingProductSerializer(item).data,'option':SavingOptionSerializer(options,many=True).data})
         print(return_product_and_option)
         result={'message':'success','user_articles': user_articles.data, 'user_comments': user_comments.data,'user_data':serializer.data,'user_products':return_product_and_option}
         return Response(result, status=status.HTTP_200_OK)

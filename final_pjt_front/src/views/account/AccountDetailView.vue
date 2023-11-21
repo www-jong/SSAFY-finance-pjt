@@ -112,7 +112,7 @@
                                 :product="product" @update:checked="handleChecked" />
                         </tbody>
                     </table>
-                    <button class="text-indigo-500 py-2 px-4 font-medium mt-4"> Show more {{ chartData.datasets }}</button>
+                    <button class="text-indigo-500 py-2 px-4 font-medium mt-4"> Show more</button>
                 </div>
             </div>
         </div>
@@ -145,9 +145,9 @@ onMounted(() => {
 
 const filteredsearch_user = computed(() => store.search_user);
 
-watch(() => route.params.search_username, (newSearch_username) => {
-    store.get_user_data(newSearch_username, () => router.push('/'));
-});
+//watch(() => route.params.search_username, (newSearch_username) => {
+//   store.get_user_data(newSearch_username, () => router.push('/'));
+//});
 
 const editProfile = () => {
     // 프로필 수정 로직

@@ -9,7 +9,7 @@
       <p class="text-gray-600 mb-6">{{ product.kor_co_nm }}</p>
 
       <div class="my-4">
-        <h3 class="text-lg font-semibold mb-2">옵션 상세 정보 {{ product.join_user }}</h3>
+        <h3 class="text-lg font-semibold mb-2">옵션 상세 정보</h3>
         <ul>
           <li class="mb-1">저축 기간: {{ option.save_trm }}개월</li>
           <li class="mb-1">이자율: {{ option.intr_rate }}%</li>

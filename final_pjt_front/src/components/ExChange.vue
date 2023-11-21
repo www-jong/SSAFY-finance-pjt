@@ -82,7 +82,7 @@ watch([from_money, from_exchange, to_exchange], ([newFromMoney]) => {
 watch([to_money, from_exchange, to_exchange], ([newToMoney]) => {
   if (isUserTriggeredTo.value && from_exchange.value && to_exchange.value && newToMoney) {
     const tmp_y=to_Numeric(from_exchange.value.cur_unit)
-    from_money.value = calculateExchange(newToMoney, to_exchange.value.deal_bas_r, from_exchange.value.deal_bas_r)/tmp_y.toFixed(2);
+    from_money.value = calculateExchange(newToMoney, to_exchange.value.deal_bas_r, from_exchange.value.deal_bas_r)*tmp_y.toFixed(2);
     isUserTriggeredTo.value = false;
   }
 }, { deep: true });

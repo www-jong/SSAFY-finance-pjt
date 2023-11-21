@@ -68,7 +68,6 @@ class DepositOption(models.Model):
     intr_rate_type = models.TextField()
 
 
- 
 class SavingProduct(models.Model):
     code = models.TextField(unique=True)      
     fin_prdt_cd = models.TextField()                                        #상품코드

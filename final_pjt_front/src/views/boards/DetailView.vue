@@ -14,8 +14,8 @@
       <br>
       <br>
       <hr>
-      <p class="text-xs text-gray-500 mt-2 text-right">작성일: {{ article.created_at }}</p>
-      <p class="text-xs text-gray-500 mt-2 text-right">수정일: {{ article.updated_at }}</p>
+      <p class="text-xs text-gray-500 mt-2 text-right">작성일: {{ formatDate(article.created_at) }}</p>
+      <p class="text-xs text-gray-500 mt-2 text-right">수정일: {{ formatDate(article.updated_at) }}</p>
 
       <div>
         <!-- 좋아요 버튼 -->
@@ -67,16 +67,15 @@
             <p>{{ comment.content }}</p>            
             <p class="text-sm text-gray-600">{{ formatDate(comment.created_at) }}</p>
 
-            <div class="text-right">
-              <!-- 댓글 수정 버튼 -->
-              <button v-if="isCommentOwner(comment)" @click="editComment(comment)" class="mt-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">댓글 수정</button>
 
-              <!-- 댓글 삭제 버튼 -->
-              <button v-if="isCommentOwner(comment)" @click="deleteComment(comment)" class="mt-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">댓글 삭제</button>
-            </div>
-
-            <!-- 대댓글 작성 버튼 -->
-            <button @click="toggleReplyForm(comment.id)" class="mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">답글 작성</button>
+            <div>
+        <button @click="toggleReplyForm(comment.id)" class="mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          답글 작성
+        </button>
+        <button v-if="isCommentOwner(comment)" @click="deleteComment(comment)" class="mt-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" style="float: right">댓글 삭제</button>
+      
+        <button v-if="isCommentOwner(comment)" @click="editComment(comment)" class="mt-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" style="float: right">댓글 수정</button>
+      </div>
 
             <!-- 대댓글 작성 영역 -->            
             <div v-if="comment.showReplyForm" class="mt-2 text-right">
@@ -90,6 +89,9 @@
                 <p class="font-semibold">{{ reply.user.username }} ({{ reply.user.nickname }})</p>
                 <p>{{ reply.content }}</p>
                 <p class="text-sm text-gray-600">{{ formatDate(reply.created_at) }}</p>
+                <div class="text-right">
+      <button v-if="isCommentOwner(reply)" @click="deleteComment(reply)" class="mt-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">댓글 삭제</button>
+    </div>
               </div>
             </div>
           </div>

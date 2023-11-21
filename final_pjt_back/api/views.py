@@ -292,7 +292,7 @@ def join_saving_product(request):
         product.join_user.add(user)
         message = '구독 완료'
         print('add_ok')
-    return Response({'message': message})
+    return Response({'message': message,'data':SavingProductSerializer(product).data})
 
 
 

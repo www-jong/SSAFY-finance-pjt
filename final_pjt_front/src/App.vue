@@ -1,5 +1,5 @@
 <template>
-  <header class="bg-gray-800 text-white p-4">
+  <header  v-if="!$route.meta.hideNav" class="bg-gray-800 text-white p-4">
     <nav class="flex justify-between items-center">
       <!-- Existing Links -->
       <div class="flex items-center space-x-4">
@@ -40,7 +40,7 @@
     </nav>
   </header>
   <RouterView />
-  <foot/>
+  <foot  v-if="!$route.meta.hideFoot"/>
 </template>
 
 <script setup>

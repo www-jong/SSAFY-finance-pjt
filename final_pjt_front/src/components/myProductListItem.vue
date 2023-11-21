@@ -1,5 +1,5 @@
 <template>
-  <tr>
+  <tr :class="isChecked ? 'bg-gray-100' : 'bg-white'">
     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
       <input type="checkbox" class="rounded text-indigo-600 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" v-model="isChecked" @change="onCheckboxChange" />
     </td>
@@ -64,4 +64,14 @@ const onCheckboxChange = () => {
 
 <style scoped>
 /* 스타일링 */
+.bg-gray-100 {
+  background-color: #f5f5f5; /* 예시 색상, 실제 필요한 색상으로 조정 */
+}
+.bg-white {
+  background-color: #ffffff;
+}
+
+input[type="checkbox"] {
+  transform: scale(1.3); /* 크기 2배 증가 */
+}
 </style>
