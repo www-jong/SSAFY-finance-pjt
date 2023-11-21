@@ -113,51 +113,10 @@ def api_test(request):
     print(res_data)
     return Response({'data':res_data})
 
-@api_view(["GET"])
-def save_deposit_products(request):
-    URL = BASE_URL+DEPOSIT_API_URL
-    product_result=[]
-    option_result=[]
-    for FinGrpNo in ['020000','030200','030300','050000','060000']: 
-        page_no=1
-        print('now',page_no,FinGrpNo)
-        while True:
-            params = {
-                'auth':settings.FSS_KEY,
-                'topFinGrpNo':FinGrpNo,
-                'pageNo':page_no
-            }
-            data,max_page_no,total_count,err_cd,option_data=finance_data_divider(URL,params)
-            if total_count==0 or err_cd!='000': # 데이터없으면 나가기
-                break
-            product_result.extend(data)
-            option_result.extend(option_data)
-            if page_no>=max_page_no:
-                break
-            page_no+=1
-    filtered_data=finance_data_handler(product_result,option_result)
-    returned_data=[]
-    for item_code in filtered_data:
-        returned_data.append(filtered_data[item_code])
-        product,created=DepositProduct.objects.get_or_create(code=item_code)
-        if created:
-            print('생성',item_code)
-            product.delete()
-            product_serializer=DepositProductSerializer(data=filtered_data[item_code]['product'])
-            if product_serializer.is_valid(raise_exception=True):
-                product=product_serializer.save()
-            for option in filtered_data[item_code]['option']:
-                option_serializer=DepositOptionSerializer(data=option)
-                if option_serializer.is_valid(raise_exception=True):
-                    option_serializer.save(product=product)
-        else:
-            print('aleady')
-            pass
-    print(returned_data)
-    return Response({'message':'success','data':returned_data})
+
 
 @api_view(["GET"])
-def save_deposit_products2(request):
+def save_deposit_products(request):
     print('저장되있음')
     URL = BASE_URL+DEPOSIT_API_URL
     product_result=[]
@@ -204,7 +163,6 @@ def save_deposit_products2(request):
     else:
         returned_data = []
         for item in products:
-            # Django REST framework의 Serializer를 사용하여 직렬화
             product_serializer = DepositProductSerializer(item)
             options = DepositOption.objects.filter(code=item.code)
             option_serializer = DepositOptionSerializer(options, many=True)
@@ -215,7 +173,6 @@ def save_deposit_products2(request):
             })
 
         print('완완')
-        print(returned_data)
         return Response({'message': 'success', 'data': returned_data})
 
 
@@ -231,7 +188,6 @@ def save_saving_products(request):
     URL = BASE_URL+SAVING_API_URL
     product_result=[]
     option_result=[]
-
     products=SavingProduct.objects.all()
     if not products:
         for FinGrpNo in ['020000','030200','030300','050000','060000']: 
@@ -284,7 +240,6 @@ def save_saving_products(request):
             })
 
         print('완완')
-        print(returned_data)
         return Response({'message': 'success', 'data': returned_data})
 
 @api_view(["GET"])
@@ -315,7 +270,7 @@ def join_deposit_product(request):
         product.join_user.add(user)
         message = '구독 완료'
         print('add_ok')
-    return Response({'message': message})
+    return Response({'message': message,'data':DepositProductSerializer(product).data})
 
 @api_view(["POST"])
 def join_saving_product(request):
@@ -338,6 +293,8 @@ def join_saving_product(request):
         message = '구독 완료'
         print('add_ok')
     return Response({'message': message})
+
+
 
 # 전체 정기예금 상품 목록 출력
 # 정기예금 상품 추가하기

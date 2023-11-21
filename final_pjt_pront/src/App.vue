@@ -40,12 +40,14 @@
     </nav>
   </header>
   <RouterView />
+  <foot/>
 </template>
 
 <script setup>
 import { RouterLink } from 'vue-router';
 import { ref } from 'vue';
 import { useCounterStore } from '@/stores/counter';
+import foot from '@/foot.vue'
 const store = useCounterStore();
 console.log('appvue')
 const myname=store.username

@@ -2,8 +2,7 @@
   <div>
     <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" @click="loadDepositProducts">예금목록 보기</button>
     <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" @click="loadSavingProducts">적금목록 보기</button>
-    
-    <LoadingPage v-if="loading.value" />
+    <LoadingPage v-if="store.loading" />
 
     <div v-else-if="showDepositList" class="mt-6">
       <table class="min-w-full divide-y divide-gray-200">
@@ -98,7 +97,6 @@ import { useCounterStore } from '@/stores/counter';
 const store = useCounterStore();
 const currentPage = ref(1);
 const itemsPerPage = 10;
-const loading = ref(false);
 const showDepositList = ref(false);
 const showSavingList = ref(false);
 
@@ -106,19 +104,15 @@ const DepositcurrentSort = ref({ term: null, direction: null });
 const SavingcurrentSort = ref({ term: null, direction: null });
 
 const loadDepositProducts = async () => {
-  loading.value = true;
   await store.get_deposit_product();
   showDepositList.value = true;
   showSavingList.value = false;
-  loading.value = false;
 };
 
 const loadSavingProducts = async () => {
-  loading.value = true;
   await store.get_saving_product();
   showSavingList.value = true;
   showDepositList.value = false;
-  loading.value = false;
 };
 
 const sortDeposits = (term) => {
