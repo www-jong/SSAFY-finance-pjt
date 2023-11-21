@@ -9,4 +9,5 @@ urlpatterns = [
     path('article/like/', views.article_like),
     path('comment/<int:article_pk>/<int:comment_pk>/delete/', views.comments_delete),
     path('comment/<int:article_pk>/<int:comment_pk>/update/', views.comment_update),
+    path('<str:board_type>/<int:article_pk>/update/', views.article_update),
 ]

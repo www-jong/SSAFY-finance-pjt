@@ -46,8 +46,6 @@ def article_detail(request, board_type, article_pk):
     if request.method == 'GET':
         ar_serializer = ArticleSerializer(article)
         co_serializer=CommentSerializer(comment,many=True)
-        print('게시글들',ar_serializer.data)
-        print('댓글들',co_serializer.data,article_pk)
         return Response({'article':ar_serializer.data,'comments':co_serializer.data})
     if request.method == 'DELETE':
         article = get_object_or_404(Article, pk=article_pk)
@@ -56,6 +54,20 @@ def article_detail(request, board_type, article_pk):
         article.delete()
         return Response({'message': '게시글이 삭제되었습니다.'}, status=status.HTTP_204_NO_CONTENT)
 
+# 게시글 수정
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def article_update(request, board_type, article_pk):
+    article = get_object_or_404(Article, pk=article_pk)
+    if request.user != article.user:
+        return Response({'message': '권한이 없습니다.'}, status=status.HTTP_403_FORBIDDEN)
+    serializer = ArticleSerializer(article, data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# 댓글 작성
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def comments_create(request, article_pk,parent_pk):
