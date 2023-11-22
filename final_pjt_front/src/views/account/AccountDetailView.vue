@@ -36,9 +36,7 @@
                     <div class="space-x-8 flex justify-between mt-32 md:mt-0 md:justify-center">
                         <button v-if="isCurrentUser" @click="openModal"
                             class="text-white py-2 px-4 uppercase rounded bg-blue-400 hover:bg-blue-500 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5">
-                            Edit Profile</button> <button
-                            class="text-white py-2 px-4 uppercase rounded bg-gray-700 hover:bg-gray-800 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5">
-                            Message</button>
+                            Edit Profile</button>
                         <button v-if="isCurrentUser" @click="showDeleteConfirmation"
                             class="text-white py-2 px-4 uppercase rounded bg-gray-700 hover:bg-gray-800 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5">
                             탈퇴</button>
@@ -112,20 +110,20 @@
                                 :product="product" @update:checked="handleChecked" />
                         </tbody>
                     </table>
-                    <button class="text-indigo-500 py-2 px-4 font-medium mt-4"> Show more</button>
                 </div>
             </div>
         </div>
-
-        <ChartComponent v-if="chartData.datasets" :chartData="chartData" :options="chartOptions" />
-
+        <div  v-if="chartData.datasets.length>0">
+  
+        <ChartComponent :chartData="chartData" :options="chartOptions" />
+      </div>
     </div>
     <div v-else class="text-center">
         로딩중...
     </div>
 
     <AccountEditModal
-      v-if="isModalOpen"
+      v-if="store.account_modal_status"
       :user="filteredsearch_user"
       @save="saveProfile"
       @cancel="closeModal"
@@ -230,20 +228,20 @@ const handleChecked = ({ product, isChecked }) => {
 };
 
 
-const isModalOpen = ref(false);
 
+const fil_check = computed(() => store.account_edit_check);
 const openModal = () => {
-  isModalOpen.value = true;
+  store.account_modal_status = true;
 };
 
 const closeModal = () => {
     console.log('닫아')
-  isModalOpen.value = false;
+    store.account_modal_status = false;
 };
 
-const saveProfile = (editedUser) => {
-  console.log('프로필 업데이트:', editedUser);
-  closeModal();
+const saveProfile = () => {
+  console.log('프로필 업데이트 완');
+  console.log('닫는다.',fil_check.value,store.account_edit_check)
 };
 
 </script>
