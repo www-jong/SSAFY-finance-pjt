@@ -9,10 +9,21 @@ from .serializers import ExchangeDateSerializer,ExchangeInfoSerializer,DepositPr
 from .forms import ExchangeInfoForm
 import pprint
 from rest_framework.decorators import permission_classes
+from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 BASE_URL = 'http://finlife.fss.or.kr/'
 DEPOSIT_API_URL = 'finlifeapi/depositProductsSearch.json'
 SAVING_API_URL = 'finlifeapi/savingProductsSearch.json'
+import urllib.request
+import os
+import sys
+import json
+
+client_id = 'Q1bhPqB15oORhjvRNp48'
+client_secret = 'p5UktXCI8P'
+encText = urllib.parse.quote('금융')
+URL = 'https://openapi.naver.com/v1/search/news.json?query=' + encText
+
 
 def time_formmating(now="",type="to_db"):
     if not now:
@@ -326,23 +337,24 @@ def deposit_product_options(request,fin_prdt_cd):
     except:
         return Response({'error': 'Product not found'}, status=404)
 
-# 금리가 가장 높은 상품의 정보 출력
-@api_view(["GET"])
-def top_rate(request):
-    datas=DepositOptions.objects.all()
-    max_g=[-10,'']
-    for data in datas:
-        if data.intr_rate2>max_g[0]:
-            max_g=[data.intr_rate2,data.fin_prdt_cd]
-    print('@@@',max_g)
-    # 최고 금리를 가진 상품의 정보 가져오기
-    try:
-        Depositproduct = DepositProducts.objects.get(fin_prdt_cd=max_g[1])
-    except DepositProducts.DoesNotExist:
-        return JsonResponse({'error': 'Product not found'}, status=404)
-    
-    # 해당 상품 정보를 시리얼라이즈
-    data = DepositProductsSerializer(Depositproduct)
-    
-    # 시리얼라이즈된 데이터를 JSON 응답으로 반환
-    return Response(data.data, status=200)
+
+
+@api_view(['GET'])
+def news(request):
+    request = urllib.request.Request(URL)
+    request.add_header("X-Naver-Client-Id",client_id)
+    request.add_header("X-Naver-Client-Secret",client_secret)
+    response = urllib.request.urlopen(request)
+    rescode = response.getcode()
+    # if(rescode==200):
+    #     response_body = response.read()
+    #     print(response_body.decode('utf-8'))
+    #     return JsonResponse({ 'response' : response_body.decode('utf-8') })
+    # else:
+    #     print("Error Code:" + rescode)
+    #     return Response({"error": "조회에 실패했습니다"}, status=status.HTTP_404_NOT_FOUND)
+    if(rescode==200):
+        response_body = response.read()
+        return Response(json.loads(response_body.decode('utf-8')), status=status.HTTP_200_OK)
+    else:
+        return Response({"message": "조회에 실패했습니다."}, status=status.HTTP_404_NOT_FOUND)

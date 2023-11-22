@@ -45,6 +45,7 @@
             required>
         </div>
 
+        <!-- Birth Date Field -->
         <div class="mb-4">
           <label class="block text-gray-700 text-sm font-bold mb-2" for="birth">Birth Date</label>
           <input type="date" id="birth" v-model="birth"
