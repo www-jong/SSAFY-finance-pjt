@@ -22,7 +22,9 @@ export const useCounterStore = defineStore('counter', () => {
   const join_deposit_products=ref('')
   const search_user_products = ref('')
   const join_saving_products=ref('')
+  const account_edit_check=ref(false)
   const loading=ref(false)
+  const account_modal_status=ref(false)
   const deposit_products = ref([])
   const saving_products = ref([])
   const isLogin = computed(() => {
@@ -108,6 +110,32 @@ export const useCounterStore = defineStore('counter', () => {
       });
   }
 
+  const account_edit = function (payload) {
+    axios({
+      method: 'post',
+      url: `${API_URL}/accounts/profile/edit/`,
+      data:payload,
+      headers: {
+        Authorization: `Token ${token.value}`
+      }
+      
+    })
+      .then(res => {
+        if(res.data.message==='success'){
+        console.log('수정 완료')
+        alert('수정이 완료되었습니다.\n 다시 로그인해주세요.')
+        account_modal_status.value=false
+        logOut()
+      }
+      else{
+        alert(res.data)
+      }
+      })
+      .catch((err) => {
+        console.log(err)
+        alert(err.response.data.data)
+      });
+  }
   const getExChange = function () {
     loading.value=true
     axios({
@@ -475,6 +503,8 @@ export const useCounterStore = defineStore('counter', () => {
   }
 
   return {
+    account_edit_check,
+    account_edit,
     articles,
     article,
     comments,
@@ -507,6 +537,7 @@ export const useCounterStore = defineStore('counter', () => {
     search_user_articles,
     join_product,
     loading,
-    search_user_products
+    search_user_products,
+    account_modal_status
   }
 }, { persist: true })

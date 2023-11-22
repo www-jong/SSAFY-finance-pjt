@@ -47,7 +47,7 @@
     </div>
 </template>
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue';
+import { ref, computed, watch, onMounted,onBeforeMount } from 'vue';
 import city_data from '@/assets/data/city_data.json'
 import bank_data from '@/assets/data/banks.json'
 console.log(city_data)
@@ -99,9 +99,38 @@ let searchResults = ref([]);
 
 
 
-onMounted(() => {
+const my_position = ref({latitude: 0, longitude:0});
+
+const fetchLocation = () => {
+    console.log('dd')
+  return new Promise((resolve, reject) => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          my_position.value = {
+            latitude: pos.coords.latitude,
+            longitude: pos.coords.longitude
+          };
+          resolve();
+        },
+        (error) => {
+          console.error("Error getting location: ", error);
+          reject(error);
+        }
+      );
+    } else {
+      console.error("Geolocation is not supported by this browser.");
+      reject(new Error("Geolocation not supported"));
+    }
+  });
+};
+
+onMounted(async () => {
+  await fetchLocation();
+  console.log(my_position.value)
     if (window.kakao && window.kakao.maps) {
-        initMap();
+        initMap(my_position.value);
+
     } else {
         const script = document.createElement('script');
         /* global kakao */
@@ -114,7 +143,10 @@ onMounted(() => {
 const initMap = () => {
     const container = document.getElementById('map');
     const options = {
-        center: new kakao.maps.LatLng(35.0879307, 128.9022845),
+        center: new kakao.maps.LatLng(
+            my_position.value.latitude === 0 ? 35.094847 : my_position.value.latitude,
+            my_position.value.longitude === 0 ? 128.853615 : my_position.value.longitude
+            ),
         level: 3,
     };
 

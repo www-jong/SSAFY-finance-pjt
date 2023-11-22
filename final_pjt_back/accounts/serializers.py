@@ -40,6 +40,12 @@ class UserSerializer(serializers.ModelSerializer):
         #fields = ['username', 'nickname','email','followings']  # 'nickname' 필드가 유저 모델에 있는지 확인
         exclude = ('password',)
 
+class CustomUserUpdateSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = CustomUser
+        fields = ['nickname','email','birth','capital','salary','password']
+
 class CustomUserDetailSerializer(serializers.ModelSerializer):
     followers = serializers.SerializerMethodField()
 

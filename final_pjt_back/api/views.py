@@ -146,7 +146,7 @@ def save_deposit_products(request):
             returned_data.append(filtered_data[item_code])
             product,created=DepositProduct.objects.get_or_create(code=item_code)
             if created:
-                print('생성',item_code)
+                #print('생성',item_code)
                 product.delete()
                 product_serializer=DepositProductSerializer(data=filtered_data[item_code]['product'])
                 if product_serializer.is_valid(raise_exception=True):
@@ -158,22 +158,21 @@ def save_deposit_products(request):
             else:
                 print('aleady')
                 pass
-        print(returned_data)
-        return Response({'message':'success','data':returned_data})
-    else:
-        returned_data = []
-        for item in products:
-            product_serializer = DepositProductSerializer(item)
-            options = DepositOption.objects.filter(code=item.code)
-            option_serializer = DepositOptionSerializer(options, many=True)
+        #return Response({'message':'success','data':returned_data})
+    products=DepositProduct.objects.all()
+    returned_data = []
+    for item in products:
+        product_serializer = DepositProductSerializer(item)
+        options = DepositOption.objects.filter(code=item.code)
+        option_serializer = DepositOptionSerializer(options, many=True)
 
-            returned_data.append({
-                'product': product_serializer.data,
-                'option': option_serializer.data
-            })
+        returned_data.append({
+            'product': product_serializer.data,
+            'option': option_serializer.data
+        })
 
-        print('완완')
-        return Response({'message': 'success', 'data': returned_data})
+    print('완완',returned_data)
+    return Response({'message': 'success', 'data': returned_data})
 
 
 @api_view(["GET"])
@@ -213,7 +212,7 @@ def save_saving_products(request):
             returned_data.append(filtered_data[item_code])
             product,created=SavingProduct.objects.get_or_create(code=item_code)
             if created:
-                print('생성',item_code)
+                #print('생성',item_code)
                 product.delete()
                 product_serializer=SavingProductSerializer(data=filtered_data[item_code]['product'])
                 if product_serializer.is_valid(raise_exception=True):
@@ -225,24 +224,24 @@ def save_saving_products(request):
             else:
                 print('aleady')
                 pass
-        return Response({'message':'success','data':returned_data})
-    else:
-        returned_data = []
-        tmp_names=set()
-        for item in products:
-            tmp_names.add(item.kor_co_nm)
-            # Django REST framework의 Serializer를 사용하여 직렬화
-            product_serializer = SavingProductSerializer(item)
-            options = SavingOption.objects.filter(code=item.code)
-            option_serializer = SavingOptionSerializer(options, many=True)
+        #return Response({'message':'success','data':returned_data})
+    products=SavingProduct.objects.all()
+    returned_data = []
+    tmp_names=set()
+    for item in products:
+        tmp_names.add(item.kor_co_nm)
+        # Django REST framework의 Serializer를 사용하여 직렬화
+        product_serializer = SavingProductSerializer(item)
+        options = SavingOption.objects.filter(code=item.code)
+        option_serializer = SavingOptionSerializer(options, many=True)
 
-            returned_data.append({
-                'product': product_serializer.data,
-                'option': option_serializer.data
-            })
-
-        print('완완',tmp_names)
-        return Response({'message': 'success', 'data': returned_data})
+        returned_data.append({
+            'product': product_serializer.data,
+            'option': option_serializer.data
+        })
+        print('item :',item)
+    print('완완',returned_data)
+    return Response({'message': 'success', 'data': returned_data})
 
 @api_view(["GET"])
 def show_saving_products(request):
