@@ -10,5 +10,6 @@ urlpatterns = [
     path('show_saving_products/',views.show_saving_products),
     path('join_deposit_product/',views.join_deposit_product),
     path('join_saving_product/',views.join_saving_product),
+    path('news/',views.news),
     path('test/',views.api_test),
 ]
