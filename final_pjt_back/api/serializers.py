@@ -25,17 +25,17 @@ class DepositProductSerializer(serializers.ModelSerializer):
 		model = DepositProduct
 		fields = '__all__'  # 모든 필드를 포함합니다.
 
-        
-class SavingProductSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SavingProduct
-        fields = '__all__'
-
 class SavingOptionSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = SavingOption
 		fields = '__all__'
 		read_only_fields = ('product',)
+
+class SavingProductSerializer(serializers.ModelSerializer):
+    option = SavingOptionSerializer(many=True, read_only=True)
+    class Meta:
+        model = SavingProduct
+        fields = '__all__'
 
 class SubscribeProductSerializer(serializers.ModelSerializer):
     class Meta:

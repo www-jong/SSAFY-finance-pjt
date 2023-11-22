@@ -63,6 +63,11 @@ class CustomRegisterSerializer(RegisterSerializer):
     capital = serializers.IntegerField(default=0, required=False)
     salary = serializers.IntegerField(default=0, required=False)
 
+    def validate_nickname(self, value):
+        if CustomUser.objects.filter(nickname=value).exists():
+            raise serializers.ValidationError("이미 사용 중인 닉네임입니다.")
+        return value
+
     def get_cleaned_data(self):
         print(self.validated_data)
         data = super().get_cleaned_data()

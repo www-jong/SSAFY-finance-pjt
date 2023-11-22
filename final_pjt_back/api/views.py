@@ -239,7 +239,9 @@ def save_saving_products(request):
         return Response({'message':'success','data':returned_data})
     else:
         returned_data = []
+        tmp_names=set()
         for item in products:
+            tmp_names.add(item.kor_co_nm)
             # Django REST framework의 Serializer를 사용하여 직렬화
             product_serializer = SavingProductSerializer(item)
             options = SavingOption.objects.filter(code=item.code)
@@ -250,7 +252,7 @@ def save_saving_products(request):
                 'option': option_serializer.data
             })
 
-        print('완완')
+        print('완완',tmp_names)
         return Response({'message': 'success', 'data': returned_data})
 
 @api_view(["GET"])
@@ -303,7 +305,7 @@ def join_saving_product(request):
         product.join_user.add(user)
         message = '구독 완료'
         print('add_ok')
-    return Response({'message': message})
+    return Response({'message': message,'data':SavingProductSerializer(product).data})
 
 
 

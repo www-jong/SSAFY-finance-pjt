@@ -32,6 +32,19 @@ export const useCounterStore = defineStore('counter', () => {
       return true
     }
   })
+  const parseErrorMessages = (errorResponse) => {
+    let messages = [];
+    console.log('에러출력',errorResponse)
+    const data = JSON.parse(errorResponse);
+    if (data && typeof data === 'object') {
+      // 각 필드에 대한 에러 메시지를 배열에 추가합니다.
+      Object.keys(data).forEach(key => {
+        messages = messages.concat(data[key]);
+      });
+    }
+    return messages.join('\n');
+  };
+
 
   const logIn = function (payload) {
     const username = payload.username
@@ -63,7 +76,7 @@ export const useCounterStore = defineStore('counter', () => {
     my_username.value = null
     my_nickname.value = null
 
-    router.push({ name: 'HomeView' })
+    router.push({ name: 'LogInView2' })
     console.log('로그아웃 완료')
   }
 
@@ -89,7 +102,10 @@ export const useCounterStore = defineStore('counter', () => {
         const password = password1
         logIn({ username, password })
       })
-      .catch(err => console.log(err))
+      .catch(err => {
+        const errorMessages = parseErrorMessages(err.request.response);
+        alert(errorMessages);
+      });
   }
 
   const getExChange = function () {
@@ -275,12 +291,12 @@ export const useCounterStore = defineStore('counter', () => {
           search_user_products.value=res.data.user_products
         
         } else {
-          alert('없는 사용자입니다.')
+          alert('없는 사용자입니다.2')
           errorCallback();
         }
       })
       .catch(err => {
-        alert('없는 사용자입니다.')
+        alert('없는 사용자입니다.3',err)
         errorCallback();
       });
   };
@@ -457,6 +473,7 @@ export const useCounterStore = defineStore('counter', () => {
         alert("예금가입 에러.");
       });
   }
+
   return {
     articles,
     article,

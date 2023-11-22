@@ -3,7 +3,13 @@
     <img src="@/assets/image.png" class="animate-spin h-30 w-30 rounded-full" alt="Loading">
   </div>
 </template>
-<script>
+<script setup>
+import {useCounterStore} from '@/stores/counter'
+import { ref, watch } from 'vue';
+const store = useCounterStore()
+
+
+
 </script>
 
 <style>
