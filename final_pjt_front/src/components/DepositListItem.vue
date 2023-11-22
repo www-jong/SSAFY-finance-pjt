@@ -20,9 +20,9 @@
 
 <script setup>
 import { defineProps, ref, computed } from 'vue'
-import {useCounterStore} from '@/stores/counter'
+import {useStore} from '@/stores/index'
 import DepositModal from '@/components/DepositModal.vue'
-const store = useCounterStore()
+const store = useStore()
 
 
 const modal = "deposit"

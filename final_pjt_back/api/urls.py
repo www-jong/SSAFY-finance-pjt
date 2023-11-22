@@ -12,4 +12,5 @@ urlpatterns = [
     path('join_saving_product/',views.join_saving_product),
     path('news/',views.news),
     path('test/',views.api_test),
+    path('golds/',views.golds),
 ]

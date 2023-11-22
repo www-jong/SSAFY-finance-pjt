@@ -102,9 +102,9 @@
 
 <script setup>
 import { ref, defineProps, defineEmits,computed } from 'vue';
-import { useCounterStore } from '@/stores/counter';
+import { useStore } from '@/stores/index';
 
-const store=useCounterStore()
+const store=useStore()
 const existingPassword = ref('');
 const password1 = ref('');
 const password2 = ref('');

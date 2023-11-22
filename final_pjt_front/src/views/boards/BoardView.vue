@@ -13,12 +13,12 @@
 
 <script setup>
 import { onMounted, ref, watch } from 'vue'
-import { useCounterStore } from '@/stores/counter'
+import { useStore } from '@/stores/index'
 import { useRoute } from 'vue-router'
 import ArticleList from '@/components/ArticleList.vue'
 
 const route = useRoute()
-const store = useCounterStore()
+const store = useStore()
 const loading = ref(false) // 로딩 상태 추가
 
 onMounted(async () => {

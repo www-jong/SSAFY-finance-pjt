@@ -92,9 +92,9 @@ import DepositListItem from '@/components/DepositListItem.vue';
 import SavingListItem from '@/components/SavingListItem.vue';
 import LoadingPage from '@/components/LoadingPage.vue';
 import Pagination from '@/components/Pagination.vue';
-import { useCounterStore } from '@/stores/counter';
+import { useStore } from '@/stores/index';
 
-const store = useCounterStore();
+const store = useStore();
 const currentPage = ref(1);
 const itemsPerPage = 10;
 const showDepositList = ref(false);

@@ -20,9 +20,9 @@
   </template>
 <script setup>
 import { ref, defineProps, defineEmits, computed } from 'vue';
-import { useCounterStore } from '@/stores/counter';
+import { useStore } from '@/stores/index';
 
-const store = useCounterStore()
+const store = useStore()
 console.log('dd')
 
 

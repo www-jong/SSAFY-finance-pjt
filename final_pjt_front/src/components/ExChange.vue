@@ -35,10 +35,10 @@
 </template>
 <script setup>
 import ExChangeItem from '@/components/ExChangeItem.vue'
-import {useCounterStore} from '@/stores/counter'
+import {useStore} from '@/stores/index'
 import { ref, watch } from 'vue';
 import LoadingPage from '@/components/LoadingPage.vue';
-const store = useCounterStore()
+const store = useStore()
 const from_exchange = ref('')
 const to_exchange = ref('')
 const from_money = ref(0)

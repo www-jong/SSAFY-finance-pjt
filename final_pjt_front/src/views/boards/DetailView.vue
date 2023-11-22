@@ -140,11 +140,11 @@
 <script setup>
 import axios from 'axios'
 import { onMounted, onBeforeMount, ref, computed } from 'vue'
-import { useCounterStore } from '@/stores/counter'
+import { useStore } from '@/stores/index'
 import { useRoute } from 'vue-router'
 import router from '../../router';
 
-const store = useCounterStore()
+const store = useStore()
 const route = useRoute()
 
 const newComment = ref('')

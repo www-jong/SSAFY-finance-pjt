@@ -38,7 +38,7 @@
 
 <script setup>
 import { defineProps, defineEmits,computed } from 'vue';
-import {useCounterStore} from '@/stores/counter'
+import {useStore} from '@/stores/index'
 import { routerKey,useRouter } from 'vue-router';
 const router = useRouter()
 const props = defineProps({
@@ -47,7 +47,7 @@ const props = defineProps({
   showModal: Boolean,
   type:String
 });
-const store = useCounterStore()
+const store = useStore()
 const emit = defineEmits(['update:showModal']);
 
 // 사용자가 이미 구독했는지 확인

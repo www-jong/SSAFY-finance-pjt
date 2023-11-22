@@ -1,44 +1,42 @@
 <template>
-  <header  v-if="!$route.meta.hideNav" class="bg-gray-800 text-white p-4">
-    <nav class="flex justify-between items-center">
-      <!-- Existing Links -->
-      <div class="flex items-center space-x-4">
-        <RouterLink class="hover:text-gray-300" :to="{ name: 'HomeView' }">Home</RouterLink>
-        <RouterLink class="hover:text-gray-300" :to="{ name: 'KakaoView' }">은행 찾기</RouterLink>
-        <RouterLink class="hover:text-gray-300" :to="{ name: 'ExChangeView' }">환율</RouterLink>
-        <RouterLink class="hover:text-gray-300" :to="{ name: 'FinanceProductView' }">금융상품</RouterLink>
-        
-        <RouterLink class="hover:text-gray-300" :to="{ name: 'BoardView',params: { board_type: 'free' }}">자유게시판</RouterLink>
-        <RouterLink class="hover:text-gray-300" :to="{ name: 'BoardView',params: { board_type: 'secret' }}">비밀게시판</RouterLink>
-        <RouterLink class="hover:text-gray-300" :to="{ name: 'BoardView',params: { board_type: 'hi' }}">테스트게시판</RouterLink>
-        <!-- Dropdown Wrapper -->
 
+  <header  v-if="!$route.meta.hideNav" class="bg-gray-800 relative mb-1">
+    <nav class="p-6 m-auto relative">
+      <div class="flex justify-between items-center">
+        <h1 class="pr-6 border-r-2 text-2xl font-bold text-gray-500">saunatime</h1>
+        <div class="flex justify-between flex-grow">
+          <div class="flex ml-6 items-center">
+            <span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-4 cursor-pointer text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </span>
+            <input class="outline-none text-sm flex-grow bg-gray-100" type="text" placeholder="Search saunas in Finland…" />
+          </div>
+          <div class="md:flex space-x-6 hidden">
+            <span class="text-gray-500 text-md">+ Add your sauna</span>
+            <span class="text-gray-500 text-md">Sign up</span>
+            <span class="text-gray-500 text-md">Log in</span>
+          </div>
+        </div>
       </div>
-      <div class="flex items-center space-x-4">
-        <template v-if="store.isLogin">
-          <RouterLink class="hover:text-gray-300" :to="{name:'AccountDetailView',params:{search_username:store.my_username}}">{{store.my_username}}님 환영합니다</RouterLink>
-          <a type="button" @click="logOut"  class="hover:text-gray-300">Logout</a>
-      </template>
-      <template v-else>      
-        <p>{{name}}</p>  
-        <RouterLink class="hover:text-gray-300" :to="{name:'LogInView'}">LogIn</RouterLink>
-        <RouterLink class="hover:text-gray-300" :to="{name:'SignUpView'}">SignUpPage</RouterLink>
-      </template>
-      </div>
-      <!-- User Section -->
-      <!-- ... Rest of the user section ... -->
     </nav>
+
   </header>
-  <RouterView />
-  <foot  v-if="!$route.meta.hideFoot"/>
+  <main class="flex-grow mt-10 relative">
+      <RouterView />
+    </main>
+
+    <foot v-if="!$route.meta.hideFoot" />
+
 </template>
 
 <script setup>
 import { RouterLink } from 'vue-router';
 import { ref } from 'vue';
-import { useCounterStore } from '@/stores/counter';
+import { useStore } from '@/stores/index';
 import foot from '@/foot.vue'
-const store = useCounterStore();
+const store = useStore();
 console.log('appvue')
 const myname=store.username
 const isDropdownOpen = ref(false);
@@ -59,6 +57,6 @@ const logOut = () => {
 // ... Rest of your script ...
 </script>
 
-<style scoped>
-/* Additional CSS styles can be defined here */
+
+<style>
 </style>

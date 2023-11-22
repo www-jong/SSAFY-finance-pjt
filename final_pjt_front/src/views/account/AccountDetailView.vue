@@ -142,7 +142,7 @@
 
 <script setup>
 import { computed,reactive, ref, watch, onMounted } from 'vue';
-import { useCounterStore } from '@/stores/counter';
+import { useStore } from '@/stores/index';
 import { useRoute, useRouter } from 'vue-router';
 import myProductListItem from '@/components/myProductListItem.vue';
 import AccountEditModal from '@/components/AccountEditModal.vue'
@@ -152,7 +152,7 @@ import { Chart } from 'chart.js';
 import ChartComponent from '@/components/ChartComponent.vue';
 const route = useRoute();
 const router = useRouter();
-const store = useCounterStore();
+const store = useStore();
 const isCurrentUser = computed(() => {
     return store.search_user && store.my_username && (store.search_user.username === store.my_username);
 });

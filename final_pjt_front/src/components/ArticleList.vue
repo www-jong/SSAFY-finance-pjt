@@ -20,13 +20,13 @@
 import LoadingPage from '@/components/LoadingPage.vue'
 import ArticleListItem from '@/components/ArticleListItem.vue'
 import { computed, defineProps } from 'vue'
-import { useCounterStore } from '@/stores/counter'
+import { useStore } from '@/stores/index'
 
 const props = defineProps({
   board_type: String,
   loading: Boolean // 여기에서 loading을 props로 받습니다.
 })
 
-const store = useCounterStore()
+const store = useStore()
 const filteredArticles = computed(() => store.articles)
 </script>

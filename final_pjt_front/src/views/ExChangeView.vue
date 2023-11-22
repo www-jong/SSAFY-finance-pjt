@@ -8,8 +8,8 @@
 <script setup>
 import ExChange from '@/components/ExChange.vue'
 import { onMounted } from 'vue'
-import { useCounterStore } from '@/stores/counter'
-const store = useCounterStore()
+import { useStore } from '@/stores/index'
+const store = useStore()
 onMounted(() => {
   store.getExChange()
 })

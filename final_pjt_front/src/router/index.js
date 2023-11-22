@@ -8,7 +8,7 @@ import DetailView from '@/views/boards/DetailView.vue'
 import CreateView from '@/views/boards/CreateView.vue'
 import ExChangeView from '@/views/ExChangeView.vue'
 import AccountDetailView from '@/views/account/AccountDetailView.vue'
-import {useCounterStore} from '@/stores/counter'
+import {useStore} from '@/stores/index'
 import FinanceProductView from '@/views/product/FinanceProductView.vue'
 import LoginView2 from '@/views/account/LoginView.vue'
 import SignUpView2 from '@/views/account/SignUpView.vue'
@@ -88,7 +88,7 @@ const router = createRouter({
 
 
 router.beforeEach((to, from, next) => {
-  const store = useCounterStore()
+  const store = useStore()
   if (to.name !== 'LogInView2' && to.name !== 'SignUpView2' && !store.isLogin) {
     // 로그인이 필요한 페이지에 접근하려고 할 때
     window.alert('로그인이 필요합니다.')

@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 
-export const useCounterStore = defineStore('counter', () => {
+export const useStore = defineStore('counter', () => {
   const articles = ref([])
   const article = ref([])
   const comments = ref([])

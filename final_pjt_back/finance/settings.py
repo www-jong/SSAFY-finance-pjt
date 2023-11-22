@@ -7,7 +7,7 @@ import environ
 BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env(DEBUG=(bool, True))
 environ.Env.read_env(
-    env_file=os.path.join(BASE_DIR.parent, '.env')
+    env_file=os.path.join(BASE_DIR, '.env')
 )
 
 #SECRET_KEY = get_secret("SECRET_KEY")
@@ -21,6 +21,7 @@ KOREAEXIM_KEY = env('KOREAEXIM') # 한국 수출입은행 키
 FSS_KEY=env('FSS')
 NAVER_CLIENT_ID = env('NAVER_CLIENT_ID')
 NAVER_CLIENT_SECRET = env('NAVER_CLIENT_SECRET')
+NASDAQ_KEY=env('NASDAQ')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 

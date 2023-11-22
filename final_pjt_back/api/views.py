@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.conf import settings
 import requests
-from datetime import datetime,date
+from datetime import datetime,date,timedelta
 from pytz import timezone
 from .models import ExchangeDate,ExchangeInfo,DepositProduct,DepositOption,SavingProduct,SavingOption
 from .serializers import ExchangeDateSerializer,ExchangeInfoSerializer,DepositProductSerializer,DepositOptionSerializer,SavingOptionSerializer,SavingProductSerializer
@@ -18,7 +18,8 @@ import urllib.request
 import os
 import sys
 import json
-
+import pandas as pd
+import quandl
 
 
 
@@ -317,7 +318,32 @@ def news(request):
 
     if(rescode==200):
         response_body = response.read()
-        print(response_body.decode('utf-8'))
+        #print(response_body.decode('utf-8'))
         return Response(json.loads(response_body.decode('utf-8')), status=status.HTTP_200_OK)
     else:
         return Response({"message": "조회에 실패했습니다."}, status=status.HTTP_404_NOT_FOUND)
+    
+@api_view(['GET'])
+def golds(request):
+
+
+# 오늘 날짜를 년-월-일 형식으로 가져오기
+    today = datetime.now().strftime("%Y-%m-%d")
+
+    # 오늘로부터 2개월 전 날짜 구하기
+    # 참고: 2개월을 대략 60일로 계산함 (정확한 계산을 위해서는 다른 방법이 필요할 수 있음)
+    two_months_ago = (datetime.now() - timedelta(days=60)).strftime("%Y-%m-%d")
+
+    today, two_months_ago
+    #nasdaqdatalink.ApiConfig.api_key = settings.NASDAQ_KEY
+    quandl.ApiConfig.api_key=settings.NASDAQ_KEY
+    df=quandl.get(dataset='LBMA/GOLD',start_date=two_months_ago,end_date=today)
+    #print(df)
+    #print(df)
+    # 날짜 인덱스를 컬럼으로 변환
+    df.reset_index(inplace=True)
+
+    # JSON 형식으로 변환
+    json_data = df.to_json(orient='records')
+    print(json_data)
+    return Response({'message': 'success', 'data': json_data})

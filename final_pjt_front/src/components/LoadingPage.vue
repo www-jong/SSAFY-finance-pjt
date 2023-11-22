@@ -4,9 +4,9 @@
   </div>
 </template>
 <script setup>
-import {useCounterStore} from '@/stores/counter'
+import {useStore} from '@/stores/index'
 import { ref, watch } from 'vue';
-const store = useCounterStore()
+const store = useStore()
 
 
 

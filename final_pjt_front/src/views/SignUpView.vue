@@ -91,7 +91,7 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import { useCounterStore } from '@/stores/counter';
+import { useStore } from '@/stores/index';
 
 const username = ref('');
 const password1 = ref('');
@@ -106,7 +106,7 @@ const salary = ref(null); // 선택 필드
 const isPasswordValid = computed(() => password1.value.length === 0 || (/[a-zA-Z]/.test(password1.value) && /[0-9]/.test(password1.value)));
 const isPasswordMatch = computed(() => password2.value.length === 0 || password1.value === password2.value);
 
-const store = useCounterStore();
+const store = useStore();
 
 const signUp = () => {
   if (!isPasswordValid.value) {

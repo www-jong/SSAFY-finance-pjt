@@ -54,12 +54,12 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useCounterStore } from '@/stores/counter';
+import { useStore } from '@/stores/index';
 
 const username = ref('');
 const password = ref('');
 
-const store = useCounterStore();
+const store = useStore();
 const logIn = () => {
   console.log('로그인 함수 실행',username.value,password.value)
   const payload = {
