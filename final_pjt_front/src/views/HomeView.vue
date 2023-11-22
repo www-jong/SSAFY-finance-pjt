@@ -1,9 +1,3 @@
-<script setup>
-import NewsList from '../components/NewsList.vue'
-
-
-</script>
-
 <template>
 
     <div>
@@ -13,35 +7,11 @@ import NewsList from '../components/NewsList.vue'
     <NewsList/>
 
 </template>
+<script setup>
+import NewsList from '@/components/NewsList.vue'
 
+
+</script>
 <style scoped>
 
 </style>
-
-
-
-<script>
-
-<script setup>
-import { ref } from 'vue';
-
-const position = ref(null);
-
-const fetchLocation = () => {
-  if ("geolocation" in navigator) {
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        position.value = {
-          latitude: pos.coords.latitude,
-          longitude: pos.coords.longitude
-        };
-      },
-      (error) => {
-        console.error("Error getting location: ", error);
-      }
-    );
-  } else {
-    console.error("Geolocation is not supported by this browser.");
-  }
-};
-</script>

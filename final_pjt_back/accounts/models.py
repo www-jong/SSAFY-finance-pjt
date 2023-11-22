@@ -1,10 +1,16 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+import os
+
+
+def user_directory_path(instance, filename):
+    # instance.username을 사용하여 경로 생성
+    return f'profile_images/{instance.username}/{filename}'
 
 class CustomUser(AbstractUser):
     nickname = models.CharField(max_length=100, unique=True)
     email = models.EmailField(max_length=100, unique=True)
-    image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
+    image = models.ImageField(upload_to=user_directory_path, blank=True, null=True)
     gender = models.CharField(max_length=6, choices=[('male', 'Male'), ('female', 'Female')])
     birth = models.DateField()  # 생년월일 필드
     capital = models.IntegerField(default=0)

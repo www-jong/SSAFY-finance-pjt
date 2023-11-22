@@ -6,4 +6,6 @@ urlpatterns = [
     path('get_user_data/<search_name>/', views.Detail),
     path('follow/', views.follow),
     path('edit/',views.edit),
+    path('image_edit/',views.image_edit),
+    
 ]

@@ -1,6 +1,8 @@
 <template>
+    <div class="fixed inset-0 bg-black bg-opacity-50"  @click="cancelEdit">
   <div class="modal">
-    <div class="modal-content">
+    
+    <div class="modal-content" @click.stop>
       <h2>프로필 편집</h2>
       <div class="modal-scrollable-content ">
         <form @submit.prevent="saveProfile" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
@@ -95,6 +97,7 @@
     </div>
     </div>
   </div>
+</div>
 </template>
 
 <script setup>
@@ -191,6 +194,7 @@ const cancelEdit = () => {
   z-index: 1000;
   overflow-y: auto; /* 스크롤이 필요한 경우에만 스크롤이 나타나도록 설정 */
 }
+
 
 .modal-content {
   background-color: white;

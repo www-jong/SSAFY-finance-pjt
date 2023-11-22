@@ -26,11 +26,12 @@
                     <div class="relative">
                         <div
                             class="w-48 h-48 bg-indigo-100 mx-auto rounded-full shadow-2xl absolute inset-x-0 top-0 -mt-24 flex items-center justify-center text-indigo-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24" viewBox="0 0 20 20"
-                                fill="currentColor">
-                                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                                    clip-rule="evenodd" />
-                            </svg>
+                            <img 
+                            :src="filteredsearch_user.image ? filteredsearch_user.image : '@/assets/default_profile_image.png'"
+                            alt="Profile Image" 
+                            class=" rounded-full object-cover w-full h-full"
+                            @click="openImageModal"
+                            />
                         </div>
                     </div>
                     <div class="space-x-8 flex justify-between mt-32 md:mt-0 md:justify-center">
@@ -122,6 +123,15 @@
         로딩중...
     </div>
 
+
+
+    <ImageEditModal
+      v-if="store.account_image_modal_status"
+      :user="filteredsearch_user"
+      @save="saveImageProfile"
+      @cancel="closeImageModal"
+    />
+
     <AccountEditModal
       v-if="store.account_modal_status"
       :user="filteredsearch_user"
@@ -136,6 +146,8 @@ import { useCounterStore } from '@/stores/counter';
 import { useRoute, useRouter } from 'vue-router';
 import myProductListItem from '@/components/myProductListItem.vue';
 import AccountEditModal from '@/components/AccountEditModal.vue'
+import ImageEditModal from '@/components/ImageEditModal.vue'
+
 import { Chart } from 'chart.js';
 import ChartComponent from '@/components/ChartComponent.vue';
 const route = useRoute();
@@ -146,6 +158,7 @@ const isCurrentUser = computed(() => {
 });
 
 onMounted(() => {
+  
     store.get_user_data(route.params.search_username, () => router.push('/'));
 });
 
@@ -229,7 +242,22 @@ const handleChecked = ({ product, isChecked }) => {
 
 
 
-const fil_check = computed(() => store.account_edit_check);
+const openImageModal = () => {
+  console.log('이미지 모달 염',store.account_image_modal_status)
+  store.account_image_modal_status = true;
+  console.log('이미지 모달 염2',store.account_image_modal_status)
+};
+
+const closeImageModal = () => {
+    console.log('닫아')
+    store.account_image_modal_status = false;
+    router.go(0)
+};
+
+const saveImageProfile = () => {
+  console.log('이미지 업로드 완');
+};
+
 const openModal = () => {
   store.account_modal_status = true;
 };
@@ -241,7 +269,6 @@ const closeModal = () => {
 
 const saveProfile = () => {
   console.log('프로필 업데이트 완');
-  console.log('닫는다.',fil_check.value,store.account_edit_check)
 };
 
 </script>

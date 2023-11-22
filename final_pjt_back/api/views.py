@@ -19,10 +19,7 @@ import os
 import sys
 import json
 
-client_id = 'Q1bhPqB15oORhjvRNp48'
-client_secret = 'p5UktXCI8P'
-encText = urllib.parse.quote('금융')
-URL = 'https://openapi.naver.com/v1/search/news.json?query=' + encText
+
 
 
 def time_formmating(now="",type="to_db"):
@@ -308,54 +305,19 @@ def join_saving_product(request):
 
 
 
-# 전체 정기예금 상품 목록 출력
-# 정기예금 상품 추가하기
-@api_view(["GET", "POST"])
-def deposit_products(request):
-    if request.method == "GET":
-        data = DepositProducts.objects.all()
-        serializer = DepositProductsSerializer(data, many=True)
-        return Response(serializer.data)
-    else:
-        result=[]
-        data=request.data['data']
-        serial= DepositProductsSerializer(data=data)
-        if serial.is_valid():
-            serial.save()
-            return Response({'data': data, 'status': 'Success', 'result': serial.data}, status=201)
-        else:
-            return Response({'data': data, 'status': 'Error', 'result': serial.data}, status=400)
-
-# 특정 상품의 옵션 리스트 출력
-@api_view(["GET"])
-def deposit_product_options(request,fin_prdt_cd):
-    try:
-        data = DepositProducts.objects.get(fin_prdt_cd=fin_prdt_cd)
-        options=DepositOptions.objects.filter(product=data)
-        serial=DepositOptionsserializer(data=options,many=True)
-        serial.is_valid()
-        return Response(serial.data, status=201)
-    except:
-        return Response({'error': 'Product not found'}, status=404)
-
-
-
 @api_view(['GET'])
 def news(request):
+    encText = urllib.parse.quote('금융')
+    URL = 'https://openapi.naver.com/v1/search/news.json?query=' + encText+"&sim"
     request = urllib.request.Request(URL)
-    request.add_header("X-Naver-Client-Id",client_id)
-    request.add_header("X-Naver-Client-Secret",client_secret)
+    request.add_header("X-Naver-Client-Id",settings.NAVER_CLIENT_ID)
+    request.add_header("X-Naver-Client-Secret",settings.NAVER_CLIENT_SECRET)
     response = urllib.request.urlopen(request)
     rescode = response.getcode()
-    # if(rescode==200):
-    #     response_body = response.read()
-    #     print(response_body.decode('utf-8'))
-    #     return JsonResponse({ 'response' : response_body.decode('utf-8') })
-    # else:
-    #     print("Error Code:" + rescode)
-    #     return Response({"error": "조회에 실패했습니다"}, status=status.HTTP_404_NOT_FOUND)
+
     if(rescode==200):
         response_body = response.read()
+        print(response_body.decode('utf-8'))
         return Response(json.loads(response_body.decode('utf-8')), status=status.HTTP_200_OK)
     else:
         return Response({"message": "조회에 실패했습니다."}, status=status.HTTP_404_NOT_FOUND)

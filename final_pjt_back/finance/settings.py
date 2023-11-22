@@ -19,6 +19,8 @@ print(env('DJANGO'))
 SECRET_KEY = env('DJANGO')
 KOREAEXIM_KEY = env('KOREAEXIM') # 한국 수출입은행 키
 FSS_KEY=env('FSS')
+NAVER_CLIENT_ID = env('NAVER_CLIENT_ID')
+NAVER_CLIENT_SECRET = env('NAVER_CLIENT_SECRET')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 

@@ -22,14 +22,14 @@ def article_list(request,board_type):
             print('게시글들',articles)
             for data in articles:
                 print(data.user)
-            serializer = ArticleSerializer(articles, many=True)
+            serializer = ArticleSerializer(articles, many=True,context={'request': request})
             return Response({'data':serializer.data,'message':'success'})
         except:
             print('조회실패')
             return Response({'message':'fail'},status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'POST':
         print('!!!!',request.data,request.user) #여기서 지금 request.user는 username 
-        serializer = ArticleSerializer(data=request.data)
+        serializer = ArticleSerializer(data=request.data,context={'request': request})
         if serializer.is_valid(raise_exception=True):
             serializer.save(user=request.user)
             return Response({'data':serializer.data,'message':'success'}, status=status.HTTP_201_CREATED)
@@ -44,8 +44,8 @@ def article_detail(request, board_type, article_pk):
     article = get_object_or_404(Article, pk=article_pk)
     comment= Comment.objects.filter(article=article).order_by('created_at')
     if request.method == 'GET':
-        ar_serializer = ArticleSerializer(article)
-        co_serializer=CommentSerializer(comment,many=True)
+        ar_serializer = ArticleSerializer(article,context={'request': request})
+        co_serializer=CommentSerializer(comment,many=True,context={'request': request})
         return Response({'article':ar_serializer.data,'comments':co_serializer.data})
     if request.method == 'DELETE':
         article = get_object_or_404(Article, pk=article_pk)
@@ -61,7 +61,7 @@ def article_update(request, board_type, article_pk):
     article = get_object_or_404(Article, pk=article_pk)
     if request.user != article.user:
         return Response({'message': '권한이 없습니다.'}, status=status.HTTP_403_FORBIDDEN)
-    serializer = ArticleSerializer(article, data=request.data)
+    serializer = ArticleSerializer(article, data=request.data,context={'request': request})
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data)
@@ -82,17 +82,6 @@ def comments_create(request, article_pk,parent_pk):
             serializer.save(user=request.user,article=article)
         return Response({'message':'success'})
     return Response({'message': 'fail'})
-
-
-@api_view(['POST'])
-def comments_delete(request, article_pk, comment_pk):
-    '''
-    if request.user.is_authenticated:
-        comment = get_object_or_404(Comment, pk=comment_pk)
-        if request.user == comment.user:
-            comment.delete()
-    return redirect('articles:detail', article_pk)
-    '''
 
     
 @api_view(['POST'])

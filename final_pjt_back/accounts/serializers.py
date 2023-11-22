@@ -57,7 +57,13 @@ class CustomUserDetailSerializer(serializers.ModelSerializer):
             'created_at', 'updated_at', 'followings', 'followers','id'
         ]
         depth = 1  # followings 필드를 위한 설정
-
+        
+    def get_image(self, obj):
+        # 'request'를 컨텍스트에서 가져옵니다.
+        request = self.context.get('request')
+        if obj.image and hasattr(obj.image, 'url'):
+            return request.build_absolute_uri(obj.image.url) if request else obj.image.url
+        return None
     def get_followers(self, obj):
         # obj는 User 모델의 인스턴스
         return [follower.username for follower in obj.followers.all()]

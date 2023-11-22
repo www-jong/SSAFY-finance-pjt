@@ -24,6 +24,7 @@ export const useCounterStore = defineStore('counter', () => {
   const join_saving_products=ref('')
   const account_edit_check=ref(false)
   const loading=ref(false)
+  const account_image_modal_status=ref(false)
   const account_modal_status=ref(false)
   const deposit_products = ref([])
   const saving_products = ref([])
@@ -136,6 +137,34 @@ export const useCounterStore = defineStore('counter', () => {
         alert(err.response.data.data)
       });
   }
+
+  const account_image_edit = function (payload) {
+    axios({
+      method: 'post',
+      url: `${API_URL}/accounts/profile/image_edit/`,
+      data:payload,
+      headers: {
+        Authorization: `Token ${token.value}`
+      }
+      
+    })
+      .then(res => {
+        if(res.data.message==='success'){
+          search_user.value.image = res.data.data;
+        console.log('수정 완료',res.data.data)
+        alert('수정이 완료되었습니다.',res.data.data)
+        account_image_modal_status.value=false
+      }
+      else{
+        alert(res.data)
+      }
+      })
+      .catch((err) => {
+        console.log(err)
+        alert(err.response.data.data)
+      });
+  }
+
   const getExChange = function () {
     loading.value=true
     axios({
@@ -503,6 +532,7 @@ export const useCounterStore = defineStore('counter', () => {
   }
 
   return {
+    account_image_edit,
     account_edit_check,
     account_edit,
     articles,
@@ -538,6 +568,8 @@ export const useCounterStore = defineStore('counter', () => {
     join_product,
     loading,
     search_user_products,
-    account_modal_status
+    account_modal_status,
+    account_image_modal_status,
+    
   }
 }, { persist: true })

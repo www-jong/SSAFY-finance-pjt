@@ -14,11 +14,14 @@ from boards.serializers import ArticleSerializer,CommentSerializer
 from api.serializers import DepositOptionSerializer,DepositProductSerializer,SavingProductSerializer,SavingOptionSerializer
 from .forms import CustomUserChangeForm
 from django.contrib.auth import authenticate
+from django.core.files.storage import default_storage
+import os
+from django.conf import settings
 @api_view(['GET'])
 def Detail(request, search_name):
     try:
         user = CustomUser.objects.get(username=search_name)
-        serializer = CustomUserDetailSerializer(user)
+        serializer = CustomUserDetailSerializer(user,context={'request': request})
         user_articles=ArticleSerializer(Article.objects.filter(user=user),many=True)
         user_comments=CommentSerializer(Comment.objects.filter(user=user),many=True)
         user_products=user.joined_deposit_products.all()
@@ -89,3 +92,24 @@ def edit(request):
             return Response({'message':'error','data':'에러모름'},status=status.HTTP_404_NOT_FOUND)
 
 
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def image_edit(request):
+    user = request.user
+    file = request.FILES.get('image')
+    if not file:
+            return Response({"message":"error","data": "이미지 파일이 제공되지 않았습니다."}, status=400)
+
+    try:
+
+        print(request.user)
+        if user.image:
+            os.remove(os.path.join(settings.MEDIA_ROOT,user.image.name))
+        user.image = file 
+        user.save()
+
+        print('이미지 업로드 성공',request.build_absolute_uri(user.image.url))
+        return Response({"message": "success","data":request.build_absolute_uri(user.image.url)})
+    except Exception as e:
+        return Response({"message":"error","data": str(e)}, status=400)
