@@ -14,6 +14,7 @@ class CustomUserAccountAdapter(DefaultAccountAdapter):
         user.nickname = request.data.get('nickname', '') 
         user.image = request.data.get('image')
         user.gender = request.data.get('gender')
+        user.age = request.data.get('age')
         user.birth = request.data.get('birth')
         user.capital = request.data.get('capital')
         user.salary = request.data.get('salary')

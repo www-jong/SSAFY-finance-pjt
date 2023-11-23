@@ -5,7 +5,7 @@
       :to="{ name: 'CreateView', params: { board_type: route.params.board_type } }"
       class="inline-block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors"
     >
-      [CREATE]
+      글작성
     </RouterLink>
     <ArticleList :board_type="route.params.board_type" :loading="loading" class="mt-4" />
   </div>

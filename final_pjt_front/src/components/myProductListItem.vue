@@ -14,7 +14,7 @@
     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" @click="showOptionModal(36)">{{ getRate(36).init_rate }}</td>
     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" @click="showOptionModal(36)">{{ getRate(36).init_rate2 }}</td>
   </tr>
-  <DepositModal 
+  <ProductModal 
     :product="product.product"
     :option="selectedOption"
     :showModal="showModal"
@@ -25,7 +25,7 @@
 
 <script setup>
 import { defineProps, ref, computed,defineEmits } from 'vue'
-import DepositModal from '@/components/DepositModal.vue'
+import ProductModal from '@/components/ProductModal.vue'
 
 const props = defineProps({
   product: Object,

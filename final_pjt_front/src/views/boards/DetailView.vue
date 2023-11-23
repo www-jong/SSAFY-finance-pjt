@@ -10,7 +10,8 @@
     <div v-if="article && article.user" class="bg-white p-4 rounded-lg shadow-md">
 
       <div class="flex items-center">
-        <img :src="article.user.image" class="w-12 h-12 rounded-full object-cover mr-2">
+        
+        <img :src="article.user.image ? article.user.image : '/src/assets/default_profile_image.png'" class="w-12 h-12 rounded-full object-cover mr-2">
         <p>
           <span class="font-semibold">작성자:</span> {{ article.user.username }}
           <span class="font-semibold">별명:</span> {{ article.user.nickname }}
@@ -80,7 +81,7 @@
                 class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">저장</button>
             </div>
             <div class="flex items-center space-x-2">
-  <img :src="comment.user.image" class="w-10 h-10 rounded-full object-cover">
+  <img :src="comment.user.image ? comment.user.image : '/src/assets/default_profile_image.png'" class="w-10 h-10 rounded-full object-cover">
   <div>
     <p class="font-semibold">{{ comment.user.username }} ({{ comment.user.nickname }})</p>
     <p class="text-sm text-gray-600">{{ formatDate(comment.created_at) }}</p>
@@ -116,7 +117,7 @@
             <div class="mt-2 space-y-2">
               <div v-for="reply in filteredReply.filter(c => c.parent_comment === comment.id)" :key="reply.id"
                 class="bg-gray-200 p-2 rounded-lg ml-4">
-                <img :src="reply.user.image" class="w-10 h-10 rounded-full object-cover">
+                <img :src="reply.user.image ? reply.user.image : '/src/assets/default_profile_image.png'" class="w-10 h-10 rounded-full object-cover">
                 <p class="font-semibold">{{ reply.user.username }} ({{ reply.user.nickname }})</p>
                 <p>{{ reply.content }}</p>
                 <p class="text-sm text-gray-600">{{ formatDate(reply.created_at) }}</p>

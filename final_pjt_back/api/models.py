@@ -46,7 +46,7 @@ class DepositOption(models.Model):
 '''
 class DepositProduct(models.Model):
     code = models.TextField(unique=True)                                        #상품코드
-    fin_prdt_cd = models.TextField()
+    fin_prdt_cd = models.TextField()                                                   #은행이름
     kor_co_nm = models.TextField()                                                     #금융회사코드
     fin_prdt_nm = models.TextField()                                                   #금융상품명
     etc_note = models.TextField()                                                      #기타유의사항

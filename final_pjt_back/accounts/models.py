@@ -12,6 +12,7 @@ class CustomUser(AbstractUser):
     email = models.EmailField(max_length=100, unique=True)
     image = models.ImageField(upload_to=user_directory_path, blank=True, null=True)
     gender = models.CharField(max_length=6, choices=[('male', 'Male'), ('female', 'Female')])
+    age = models.IntegerField()
     birth = models.DateField()  # 생년월일 필드
     capital = models.IntegerField(default=0)
     salary = models.IntegerField(default=0)

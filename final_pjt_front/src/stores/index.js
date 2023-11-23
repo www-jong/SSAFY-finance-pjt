@@ -71,16 +71,18 @@ export const useStore = defineStore('counter', () => {
         router.push({ name: 'HomeView' })
         console.log('로그인 완료')
       })
-      .catch(err => console.log('로그인에러', err))
+      .catch(err => {
+      const errorMessages = parseErrorMessages(err.request.response);
+      alert(errorMessages)
+    })
   }
 
   const logOut = function () {
-    token.value = null
-    my_username.value = null
-    my_nickname.value = null
-
-    router.push({ name: 'LogInView2' })
-    console.log('로그아웃 완료')
+    token.value = null;
+    my_username.value = null;
+    my_nickname.value = null;
+  
+    console.log('로그아웃 완료');
   }
 
   const signUp = function (payload) {
@@ -89,6 +91,7 @@ export const useStore = defineStore('counter', () => {
     const password2 = payload.password2
     const email = payload.email
     const birth = payload.birth // birth 필드 추가
+    const age = payload.age
     const gender = payload.gender
     const capital = payload.capital
     const salary = payload.salary
@@ -97,7 +100,7 @@ export const useStore = defineStore('counter', () => {
       method: 'post',
       url: `${API_URL}/accounts/signup/`,
       data: {
-        username, password1, password2, email, birth, gender, capital, salary, nickname
+        username, password1, password2, age,email, birth, gender, capital, salary, nickname
       }
     })
       .then(res => {

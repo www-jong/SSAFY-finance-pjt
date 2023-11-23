@@ -11,15 +11,21 @@ import pprint
 from rest_framework.decorators import permission_classes
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-BASE_URL = 'http://finlife.fss.or.kr/'
-DEPOSIT_API_URL = 'finlifeapi/depositProductsSearch.json'
-SAVING_API_URL = 'finlifeapi/savingProductsSearch.json'
 import urllib.request
 import os
 import sys
 import json
-import pandas as pd
 import quandl
+import numpy as np
+import pandas as pd
+import random
+from sklearn.metrics.pairwise import cosine_similarity
+from accounts.models import CustomUser
+from accounts.serializers import CustomUserDetailSerializer
+BASE_URL = 'http://finlife.fss.or.kr/'
+DEPOSIT_API_URL = 'finlifeapi/depositProductsSearch.json'
+SAVING_API_URL = 'finlifeapi/savingProductsSearch.json'
+
 
 
 
@@ -322,3 +328,93 @@ def silvers(request):
     df.reset_index(inplace=True)
     json_data = df.to_json(orient='records')
     return Response({'message': 'success', 'data': json_data})
+
+
+@api_view(['GET'])
+def recommend(request,user_id):
+    print(user_id)
+    req_user=CustomUser.objects.get(id=user_id)
+    serializer = CustomUserDetailSerializer(req_user)
+    serializer.data.get('age')
+    print(serializer.data.get('age'),serializer.data.get('capital'),serializer.data.get('salary'))
+# 오늘 날짜를 년-월-일 형식으로 가져오기
+    params = {
+        'auth':"30d0aa193f68302232f7c844e67d4f21",
+        'topFinGrpNo':'020000',
+        'pageNo':1
+    }
+    URL = BASE_URL+DEPOSIT_API_URL
+    res_data=requests.get(URL,params=params).json()['result']
+    data=res_data['baseList']
+    filtered_item={str(i):data[i-1]['fin_co_no']+'_'+data[i-1]['fin_prdt_cd'] for i in range(1,len(data)+1)}
+
+    NUM_USERS=20000
+    NUM_ITEMS=len(filtered_item)
+    SALARY_LIST=[i*500000 for i in range(21)] # 0~ 1000만까지 50만단위 20개
+    CAPITAL_LIST=[i*10000000 for i in range(100)] # 0~10억까지 500만단위 40개
+
+    np.random.seed(0)
+    user_salary=[SALARY_LIST[int(random.random()*21)] for i in range(NUM_USERS)]
+    user_capital=[CAPITAL_LIST[int(random.random()*100)] for i in range(NUM_USERS)]
+    user_age=[20+int(random.random()*50) for i in range(NUM_USERS)]
+    target=[1+int(random.random()*NUM_ITEMS) for i in range(NUM_USERS)]
+    data = pd.DataFrame({"user_id":[i for i in range(1,NUM_USERS+1)],
+        "salary":user_salary,
+        "capital":user_capital,
+        "age":user_age,
+        "target":target
+        })
+
+    for item in range(1, NUM_ITEMS + 1):
+        data[f'{item}'] = (data['target'] == item).astype(int)
+    data = data.drop('target', axis=1)
+    df = pd.DataFrame(data)
+    df = df.set_index('user_id')
+
+    # 코사인 유사도 계산
+    user_features = data[['age', 'capital', 'salary']]
+
+    rounded_salary = min(SALARY_LIST, key=lambda x: abs(x - serializer.data.get('salary')))
+    rounded_capital = min(CAPITAL_LIST, key=lambda x: abs(x - serializer.data.get('capital')))
+
+    if serializer.data.get('salary') >= SALARY_LIST[-1]:
+        rounded_salary = SALARY_LIST[-1]
+    if serializer.data.get('capital') >= CAPITAL_LIST[-1]:
+        rounded_capital = CAPITAL_LIST[-1]
+    new_user_data={'age':serializer.data.get('age'),'capital':rounded_capital,'salary':rounded_salary}
+    num_recommendations=3
+
+    new_user_features = pd.DataFrame([new_user_data], columns=['age', 'capital', 'salary'])
+    print('co',user_features,new_user_features)
+    # 기존 사용자 데이터와의 유사도 계산
+    new_user_similarities = cosine_similarity(user_features, new_user_features)
+
+    # 유사도가 높은 사용자들 찾기
+    similar_users = pd.Series(new_user_similarities.flatten()).sort_values(ascending=False)
+
+    # 추천할 종목 리스트
+    recommended_items = []
+
+    for similar_user_index in similar_users.index:
+        # 유사한 사용자의 종목 데이터
+        similar_user_subscriptions = data.iloc[similar_user_index, 3:]
+
+        # 새로운 종목 추천
+        new_recommendations = similar_user_subscriptions.index[
+            similar_user_subscriptions == 1
+        ]
+
+        for item in new_recommendations:
+            if item not in recommended_items:
+                recommended_items.append(item)
+
+        if len(recommended_items) >= num_recommendations:
+            break
+
+    tt=[]
+    result=[filtered_item[i] for i in recommended_items[:num_recommendations]]
+    for i in recommended_items[:num_recommendations]:
+        tmp=DepositProduct.objects.get(code=filtered_item[i])
+        tt.append(tmp.kor_co_nm+'-'+tmp.fin_prdt_nm)
+    print('done',tt)
+    return Response({'message':'success','data':tt})

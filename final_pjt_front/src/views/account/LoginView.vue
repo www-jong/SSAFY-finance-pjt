@@ -26,7 +26,7 @@
                     <input type="submit" value="LogIn" class="bg-black text-white font-bold text-lg hover:bg-gray-700 p-2 mt-8">
                 </form>
                 <div class="text-center pt-12 pb-12">
-                    <p>지금당장 회원가입하세요!  <RouterLink class="hover:text-gray-300" :to="{name:'SignUpView2'}">SignUpPage</RouterLink></p>
+                    <p>지금 당장 회원가입 하세요!  <RouterLink class="hover:text-gray-300" :to="{name:'SignUpView'}">SignUpPage</RouterLink></p>
                 </div>
             </div>
 

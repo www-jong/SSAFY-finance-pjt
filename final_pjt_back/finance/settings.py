@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'sslserver',
     'api',
     'accounts',
     'boards',
@@ -85,6 +86,8 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
      'http://127.0.0.1:5173',
      'http://localhost:5173',
+     'https://gregarious-lollipop-9d22b2.netlify.app',
+     'http://localhost:8000'
 ]
 
 ROOT_URLCONF = "finance.urls"

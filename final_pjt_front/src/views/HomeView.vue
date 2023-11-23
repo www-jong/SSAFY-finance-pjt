@@ -32,14 +32,13 @@
                     <div class="grid grid-cols-1 gap-4">
                         <div>
                             <div class="bg-white border border-gray-300 shadow-lg rounded-lg h-48 overflow-hidden relative"
-                                @click="showFortune">
+                                @click="recommend">
                                 <div class="bg-white border border-gray-300 shadow-lg  h-36 overflow-hidden relative">
-                                    <img src="@/assets/money.jpg" class="w-full h-full object-cover hover:blur-sm"
-                                        @click="showFortune">
+                                    <img src="@/assets/money.jpg" class="w-full h-full object-cover hover:blur-sm">
                                 </div>
                                 <div class="absolute bottom-0 left-0 right-0 flex justify-center">
                                     <span class="text-xl font-bold text-gray-800 bg-white p-2 rounded">
-                                        금융상품 추천받기
+                                        금융상품 추천받기 
                                     </span>
                                 </div>
                             </div>
@@ -59,19 +58,33 @@
                             </div>
                         </div>
                         <div>
-                            <div class="bg-white border border-gray-300 shadow-lg rounded-lg h-48 overflow-hidden relative"
-                                @click="showFortune">
-                                <div class="bg-white border border-gray-300 shadow-lg h-36 overflow-hidden relative">
-                                    <img src="@/assets/fortune.jpg" class="w-full h-full object-cover hover:blur-sm"
-                                        @click="showFortune">
-                                </div>
-                                <!-- 중앙 정렬을 위한 Flexbox 컨테이너 -->
-                                <div class="absolute bottom-0 left-0 right-0 flex justify-center">
-                                    <span class="text-xl font-bold text-gray-800 bg-white p-2 rounded">
-                                        오늘의 운세 확인하기
-                                    </span>
-                                </div>
-                            </div>
+                            <div class="bg-gray border border-gray-300 shadow-lg rounded-lg h-48 overflow-hidden relative" @click="showFortune">
+    <div class="container mx-auto px-6 md:px-0 h-full flex items-center justify-center">
+        <div class="bg-white   rounded-lg p-1 max-w-xs mx-auto overflow-auto">
+            <table class="min-w-full text-xs">
+                <thead>
+          <tr>
+            <th class="px-2 py-1">순위</th>
+            <th class="px-2 py-1">이름</th>
+            <th class="px-2 py-1">가격(KRW)</th>
+            <th class="px-2 py-1">총 시가</th>
+            <th class="px-2 py-1">24시간 변동량</th> <!-- 새로운 열 추가 -->
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="coin in topCoins" :key="coin.id">
+            <td class="border px-2 py-1">{{ coin.rank }}</td>
+            <td class="border px-2 py-1">{{ coin.name }}</td>
+            <td class="border px-2 py-1">{{ formatPrice(coin.quotes.KRW.price) }}</td>
+            <td class="border px-2 py-1">{{ formatMarketCap(coin.quotes.KRW.market_cap) }}</td>
+            <td class="border px-2 py-1">{{ coin.quotes.KRW.percent_change_24h }}%</td> <!-- 24시간 변동량 데이터 추가 -->
+          </tr>
+        </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
                         </div>
                     </div>
                 </div>
@@ -109,17 +122,30 @@
             <p class="no-select">{{ alertMessage }}</p>
         </div>
     </div>
+    <div v-if="isrecommendvisible && Array.isArray(rre) && rre.length === 3" class="custom-alert bg-white" @click="recommendclose">
+    <div :class="['alert-content', alertBackgroundColor]">
+        <p class="no-select text-left" v-for="(item, index) in rre" :key="index">{{ item }}</p>
+        <p class="no-select text-left">을 추천드립니다.</p>
+    </div>
+</div>
+
 </template>
 <script setup>
 import NewsList from '@/components/NewsList.vue'
 import GoldChart from '@/components/GoldChart.vue'
 import SilverChart from '@/components/SilverChart.vue'
-import { ref, computed } from 'vue';
+import { ref, computed,onMounted } from 'vue';
 import background1 from '@/assets/background/background1.jpg';
 import background2 from '@/assets/background/background2.jpg';
 import background3 from '@/assets/background/background3.jpg';
 import fortune_data from '@/assets/data/fortune.json'
 import fortune_inner from '@/assets/image.png'
+
+import { useApiStore } from '@/stores/api'
+import { useStore } from '@/stores/index'
+const store = useStore()
+const apistore = useApiStore()
+
 const currentSlide = ref(0);
 
 const images = ref([
@@ -130,15 +156,14 @@ const images = ref([
 const prevSlide = () => {
     currentSlide.value = (currentSlide.value - 1 + images.value.length) % images.value.length;
 };
-
+const rre= computed(() => apistore.recommenditem)
 const nextSlide = () => {
     currentSlide.value = (currentSlide.value + 1) % images.value.length;
 };
 const fortuneMessages = fortune_data.data
 
 
-
-
+const isrecommendvisible=ref(false)
 const isAlertVisible = ref(false);
 const alertImage = fortune_inner // Set the default image path
 const alertMessage = ref('');
@@ -163,10 +188,46 @@ const showFortune = () => {
     isAlertVisible.value = true;
 };
 
+const recommend = () => {
+    apistore.recommend(store.my_id)
+    isrecommendvisible.value=true
+};
+const recommendclose = () => {
+    isrecommendvisible.value=false
+}
+
 // Function to close the alert
 const closeAlert = () => {
     isAlertVisible.value = false;
 };
+
+
+
+const formatVolume = (volume) => {
+    return `${(volume / 1e6).toFixed(2)}M`; // 예: 백만 단위로 표시
+};
+// 코인 데이터를 저장하기 위한 ref
+const topCoins = ref([]);
+
+// 숫자 포맷을 위한 함수
+const formatPrice = (price) => {
+    return new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW' }).format(price);
+};
+
+const formatMarketCap = (marketCap) => {
+    return (marketCap / 1e12).toFixed(2) + 'T';
+};
+
+// API 호출을 통해 코인 데이터 가져오기
+onMounted(async () => {
+    try {
+        const response = await fetch("https://api.coinpaprika.com/v1/tickers?quotes=KRW");
+        const data = await response.json();
+        topCoins.value = data.slice(0, 5);
+    } catch (error) {
+        console.error("Error fetching coin data:", error);
+    }
+});
 
 </script>
 

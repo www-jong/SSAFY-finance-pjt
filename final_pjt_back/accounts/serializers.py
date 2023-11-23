@@ -52,7 +52,7 @@ class CustomUserDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = [
-            'username', 'email', 'image', 'nickname', 'gender',
+            'username', 'email', 'image', 'nickname', 'gender','age',
             'birth', 'capital', 'salary',
             'created_at', 'updated_at', 'followings', 'followers','id'
         ]
@@ -74,6 +74,7 @@ class CustomRegisterSerializer(RegisterSerializer):
     birth = serializers.DateField(format="%Y-%m-%d")  # 생년월일 필드
     capital = serializers.IntegerField(default=0, required=False)
     salary = serializers.IntegerField(default=0, required=False)
+    age= serializers.IntegerField(default=0, required=False)
 
     def validate_nickname(self, value):
         if CustomUser.objects.filter(nickname=value).exists():
@@ -88,7 +89,8 @@ class CustomRegisterSerializer(RegisterSerializer):
             'gender': self.validated_data.get('gender', ''),
             'birth': self.validated_data.get('birth', '2023-11-11'),  # 기본값을 None으로 설정
             'capital': self.validated_data.get('capital', 0),
-            'salary': self.validated_data.get('salary', 0)
+            'salary': self.validated_data.get('salary', 0),
+            'age': self.validated_data.get('age',0)
         })
         return data
 
@@ -97,6 +99,7 @@ class CustomRegisterSerializer(RegisterSerializer):
         user.nickname = self.cleaned_data.get('nickname')
         user.gender = self.cleaned_data.get('gender')
         user.birth = self.cleaned_data.get('birth')
+        user.age = self.cleaned_data.get('age')
         user.capital = self.cleaned_data.get('capital')
         user.salary = self.cleaned_data.get('salary')
         user.email = self.cleaned_data.get('email')

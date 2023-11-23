@@ -56,6 +56,13 @@
                         </div>
 
                         <div class="flex flex-col pt-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="age">Age</label>
+                            <input type="text" id="age" v-model.trim="age"
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                required>
+                        </div>
+
+                        <div class="flex flex-col pt-4">
                             <label class="block text-gray-700 text-sm font-bold mb-2" for="birth">Birth Date</label>
                             <input type="date" max="2008-12-31" id="birth" v-model="birth" @input="handleBirthInput"
                                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -96,7 +103,7 @@
                             class="bg-black text-white font-bold text-lg hover:bg-gray-700 p-2 mt-8" />
                     </form>
                     <div class="text-center pt-12 pb-12">
-                        <p>이미 계정이 있으신가요? <RouterLink class="hover:text-gray-300" :to="{ name: 'LogInView2' }">LogIn
+                        <p>이미 계정이 있으신가요? <RouterLink class="hover:text-gray-300" :to="{ name: 'LogInView' }">LogIn
                             </RouterLink>
                         </p>
                     </div>
@@ -121,6 +128,7 @@ const username = ref('');
 const password1 = ref('');
 const password2 = ref('');
 const email = ref('')
+const age =ref('')
 const nickname = ref('');
 const birth = ref('');
 const gender = ref('');
@@ -150,6 +158,7 @@ const signUp = () => {
         password1: password1.value,
         password2: password2.value,
         email: email.value,
+        age:age.value,
         nickname: nickname.value,
         birth: birth.value,
         gender: gender.value,

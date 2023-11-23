@@ -4,7 +4,7 @@ import axios from 'axios'
 
 export const useNewsStore = defineStore('news', () => {
   const news = ref([])
-  const URL = 'http://127.0.0.1:8000'
+  const URL = import.meta.env.VITE_BACKSERVER
   const getNews = function() {
     axios({
       method: 'GET',
