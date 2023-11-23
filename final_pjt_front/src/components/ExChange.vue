@@ -1,36 +1,44 @@
+
 <template>
-  <div class="max-w-xl mx-auto p-4 bg-white shadow-lg rounded-lg">
-    
+  <div class="max-w-4xl mt-3 mx-auto p-4 bg-grey border border-gray-300 shadow-2xl rounded-lg">
     <h3 class="text-xl font-semibold text-blue-700 mb-6">환율정보</h3>
     <hr class="mb-6 border-blue-300">
-    <div>
-      <div class="mb-6">
-        <label class="block text-blue-700 text-sm font-bold mb-2" for="from_exchange">
-          환전 출발 국가
-        </label>
-        <select v-model="from_exchange" id="from_exchange" class="shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500">
-          <option disabled value="">국가 선택</option>
-          <option v-for="(value, name) in store.exchange_data" :key="value" :value="value">{{ value.cur_nm }}</option>
-        </select>
-        <input v-model="from_money" @input="updateFromMoney($event.target.value)" class="mt-3 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500" placeholder="금액 입력">
-      </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- Left Column: Exchange Functionality -->
       <div>
-        <label class="block text-blue-700 text-sm font-bold mb-2" for="to_exchange">
-          환전 도착 국가
-        </label>
-        <select v-model="to_exchange" id="to_exchange" class="shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500">
-          <option disabled value="">국가 선택</option>
-          <option v-for="(value, name) in store.exchange_data" :key="value" :value="value">{{ value.cur_nm }}</option>
-        </select>
-        <input v-model="to_money" @input="updateToMoney($event.target.value)" class="mt-3 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500" placeholder="금액 입력">
+        <div class="mb-6">
+          <label class="block text-blue-700 text-sm font-bold mb-2" for="from_exchange">
+            환전 출발 국가
+          </label>
+          <select v-model="from_exchange" id="from_exchange" class="shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500">
+            <option disabled value="">국가 선택</option>
+            <option v-for="(value, name) in store.exchange_data" :key="value" :value="value">{{ value.cur_nm }}</option>
+          </select>
+          <input v-model="from_money" @input="updateFromMoney($event.target.value)" class="mt-3 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500" placeholder="금액 입력">
+        </div>
+        <div>
+          <label class="block text-blue-700 text-sm font-bold mb-2" for="to_exchange">
+            환전 도착 국가
+          </label>
+          <select v-model="to_exchange" id="to_exchange" class="shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500">
+            <option disabled value="">국가 선택</option>
+            <option v-for="(value, name) in store.exchange_data" :key="value" :value="value">{{ value.cur_nm }}</option>
+          </select>
+          <input v-model="to_money" @input="updateToMoney($event.target.value)" class="mt-3 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500" placeholder="금액 입력">
+        </div>
+      </div>
+
+<!-- Right Column: Country Data with Scroll -->
+<div class="overflow-auto max-h-[600px]"> <!-- Set a max height and overflow auto -->
+        <LoadingPage v-if="store.loading" />
+        <div v-else>
+          <div v-for="data in store.exchange_data" :key="data.cur_nm" class="mt-6">
+            <ExChangeItem :data="data"/>
+          </div>
+        </div>
       </div>
     </div>
-    <LoadingPage v-if="store.loading" />
-    <div v-else>
-    <div v-for="data in store.exchange_data" :key="data.cur_nm" class="mt-6">
-      <ExChangeItem :data="data"/>
-    </div>
-  </div>
   </div>
 </template>
 <script setup>

@@ -1,29 +1,43 @@
 <template>
 
-  <header  v-if="!$route.meta.hideNav" class="bg-gray-800 relative mb-1">
-    <nav class="p-6 m-auto relative">
+  <header  v-if="!$route.meta.hideNav" class="bg-gray-800 relative">
+    <nav class="  relative">
       <div class="flex justify-between items-center">
-        <h1 class="pr-6 border-r-2 text-2xl font-bold text-gray-500">saunatime</h1>
+        <RouterLink :to="{ name: 'HomeView' }">
+        <img src="@/assets/logo.png"  class="text-white font-bold text-xl p-4 w-28">
+      </RouterLink>
         <div class="flex justify-between flex-grow">
           <div class="flex ml-6 items-center">
             <span>
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-4 cursor-pointer text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
+              <RouterLink class="text-gray-200 text-md hover:text-gray-500" :to="{ name: 'KakaoView' }">은행 찾기</RouterLink>
             </span>
-            <input class="outline-none text-sm flex-grow bg-gray-100" type="text" placeholder="Search saunas in Finland…" />
+            <span class="ml-8">
+              <RouterLink class="text-gray-200 text-md hover:text-gray-500" :to="{ name: 'ExChangeView' }">환율</RouterLink>
+            </span>
+            <span class="ml-8">
+              <RouterLink class="text-gray-200 text-md hover:text-gray-500" :to="{ name: 'FinanceProductView' }">예적금 비교</RouterLink>
+            </span>
+            <span class="ml-8">
+              <RouterLink class="text-gray-200 text-md hover:text-gray-500" :to="{ name: 'BoardView',params: { board_type: 'notice' }}">공지사항</RouterLink>
+            </span>
+            <span class="ml-8">
+              <RouterLink class="text-gray-200 text-md hover:text-gray-500" :to="{ name: 'BoardView',params: { board_type: 'free' }}">자유게시판</RouterLink>
+            </span>
+            <span class="ml-8">
+              <RouterLink class="text-gray-200 text-md hover:text-gray-500" :to="{ name: 'BoardView',params: { board_type: 'question' }}">질문게시판</RouterLink>
+            </span>
           </div>
-          <div class="md:flex space-x-6 hidden">
-            <span class="text-gray-500 text-md">+ Add your sauna</span>
-            <span class="text-gray-500 text-md">Sign up</span>
-            <span class="text-gray-500 text-md">Log in</span>
+          <div class="md:flex mr-5 space-x-6 hidden">
+            <RouterLink class="text-gray-200 text-md" :to="{name:'AccountDetailView',params:{search_username:store.my_username}}">{{store.my_nickname}}님 환영합니다</RouterLink>
+            <a type="button" @click="logOut"  class="hover:text-gray-500 text-gray-200 text-md">Logout</a>
           </div>
+
         </div>
       </div>
     </nav>
 
   </header>
-  <main class="flex-grow mt-10 relative">
+  <main class="flex-grow relative">
       <RouterView />
     </main>
 

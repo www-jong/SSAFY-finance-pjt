@@ -167,29 +167,19 @@ def save_deposit_products(request):
             else:
                 print('aleady')
                 pass
-        #return Response({'message':'success','data':returned_data})
     products=DepositProduct.objects.all()
     returned_data = []
     for item in products:
         product_serializer = DepositProductSerializer(item)
         options = DepositOption.objects.filter(code=item.code)
         option_serializer = DepositOptionSerializer(options, many=True)
-
         returned_data.append({
             'product': product_serializer.data,
             'option': option_serializer.data
         })
-
-    print('완완',returned_data)
+    print('완료')
     return Response({'message': 'success', 'data': returned_data})
 
-
-@api_view(["GET"])
-def show_deposit_products(request):
-    products=DepositProduct.objects.all()
-    serializers=DepositProductSerializer(products, many=True)
-    print(len(products))
-    return Response({'message':'good','data':serializers.data})
 
 @api_view(["GET"])
 def save_saving_products(request):
@@ -197,10 +187,11 @@ def save_saving_products(request):
     product_result=[]
     option_result=[]
     products=SavingProduct.objects.all()
+    print('있나?',len(products))
     if not products:
         for FinGrpNo in ['020000','030200','030300','050000','060000']: 
             page_no=1
-            print('now',page_no,FinGrpNo)
+            #print('now',page_no,FinGrpNo)
             while True:
                 params = {
                     'auth':settings.FSS_KEY,
@@ -233,31 +224,18 @@ def save_saving_products(request):
             else:
                 print('aleady')
                 pass
-        #return Response({'message':'success','data':returned_data})
     products=SavingProduct.objects.all()
     returned_data = []
-    tmp_names=set()
     for item in products:
-        tmp_names.add(item.kor_co_nm)
-        # Django REST framework의 Serializer를 사용하여 직렬화
         product_serializer = SavingProductSerializer(item)
         options = SavingOption.objects.filter(code=item.code)
         option_serializer = SavingOptionSerializer(options, many=True)
-
         returned_data.append({
             'product': product_serializer.data,
             'option': option_serializer.data
         })
-        print('item :',item)
-    print('완완',returned_data)
+    print('완료')
     return Response({'message': 'success', 'data': returned_data})
-
-@api_view(["GET"])
-def show_saving_products(request):
-    products=SavingProduct.objects.all()
-    serializers=SavingProductSerializer(products, many=True)
-    print(len(products))
-    return Response({'message':'good','data':serializers.data})
 
 
 @api_view(["POST"])
@@ -267,19 +245,20 @@ def join_deposit_product(request):
     try:
         product = DepositProduct.objects.get(code=code)
     except DepositProduct.DoesNotExist:
-        return Response({'message': '상품을 찾을 수 없습니다.'}, status=404)
+        return Response({'message': 'error','data':'상품을 찾을 수 없습니다.'}, status=404)
     print(product.join_user.all(),request.user)
     user = request.user
     if user in product.join_user.all():
         # 사용자가 이미 join_user 목록에 있다면 제거
         product.join_user.remove(user)
-        message = 'success'
+        message = '구독취소 완료'
         print('delete_ok')
     else:
         # 그렇지 않다면 추가
         product.join_user.add(user)
         message = '구독 완료'
         print('add_ok')
+    print(message,DepositProductSerializer(product).data)
     return Response({'message': message,'data':DepositProductSerializer(product).data})
 
 @api_view(["POST"])
@@ -295,7 +274,7 @@ def join_saving_product(request):
     if user in product.join_user.all():
         # 사용자가 이미 join_user 목록에 있다면 제거
         product.join_user.remove(user)
-        message = 'success'
+        message = '구독취소 완료'
         print('delete_ok')
     else:
         # 그렇지 않다면 추가
@@ -318,32 +297,28 @@ def news(request):
 
     if(rescode==200):
         response_body = response.read()
-        #print(response_body.decode('utf-8'))
         return Response(json.loads(response_body.decode('utf-8')), status=status.HTTP_200_OK)
     else:
         return Response({"message": "조회에 실패했습니다."}, status=status.HTTP_404_NOT_FOUND)
     
 @api_view(['GET'])
 def golds(request):
-
-
 # 오늘 날짜를 년-월-일 형식으로 가져오기
     today = datetime.now().strftime("%Y-%m-%d")
-
-    # 오늘로부터 2개월 전 날짜 구하기
-    # 참고: 2개월을 대략 60일로 계산함 (정확한 계산을 위해서는 다른 방법이 필요할 수 있음)
     two_months_ago = (datetime.now() - timedelta(days=60)).strftime("%Y-%m-%d")
-
-    today, two_months_ago
-    #nasdaqdatalink.ApiConfig.api_key = settings.NASDAQ_KEY
     quandl.ApiConfig.api_key=settings.NASDAQ_KEY
     df=quandl.get(dataset='LBMA/GOLD',start_date=two_months_ago,end_date=today)
-    #print(df)
-    #print(df)
-    # 날짜 인덱스를 컬럼으로 변환
     df.reset_index(inplace=True)
-
-    # JSON 형식으로 변환
     json_data = df.to_json(orient='records')
-    print(json_data)
+    return Response({'message': 'success', 'data': json_data})
+
+@api_view(['GET'])
+def silvers(request):
+# 오늘 날짜를 년-월-일 형식으로 가져오기
+    today = datetime.now().strftime("%Y-%m-%d")
+    two_months_ago = (datetime.now() - timedelta(days=360)).strftime("%Y-%m-%d")
+    quandl.ApiConfig.api_key=settings.NASDAQ_KEY
+    df=quandl.get(dataset='LBMA/SILVER',start_date=two_months_ago,end_date=today)
+    df.reset_index(inplace=True)
+    json_data = df.to_json(orient='records')
     return Response({'message': 'success', 'data': json_data})

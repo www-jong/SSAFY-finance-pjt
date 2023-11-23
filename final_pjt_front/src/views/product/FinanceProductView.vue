@@ -1,5 +1,4 @@
 <template>
-    <h1>금융뷰</h1>
     <ProductList class="mt-4" />
 </template>
 

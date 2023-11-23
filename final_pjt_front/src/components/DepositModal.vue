@@ -40,6 +40,7 @@
 import { defineProps, defineEmits,computed } from 'vue';
 import {useStore} from '@/stores/index'
 import { routerKey,useRouter } from 'vue-router';
+import GoldChart from './GoldChart.vue';
 const router = useRouter()
 const props = defineProps({
   option: Object,
@@ -60,14 +61,14 @@ const subscribe = (code, save_trm) => {
   console.log("구독:", code, save_trm);
   store.join_product(props.type,code)
   closeModal()
-  router.go(0);
+  router.go(0)
 };
 
 const unsubscribe = (code, save_trm) => {
   console.log("구독 취소:", code, save_trm);
   store.join_product(props.type,code)
   closeModal()
-  router.go(0);
+  router.go(0)
 };
 
 const closeModal = () => {

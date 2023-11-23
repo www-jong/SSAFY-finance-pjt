@@ -4,7 +4,7 @@
         <h3 class="text-lg font-semibold mb-4">프로필 이미지 수정</h3>
         <!-- 현재 이미지 표시 -->
         <div>
-    <img :src="user.image ? user.image : '@/assets/default_profile_image.png'" alt="이미지 없음" class="w-24 h-24 mx-auto rounded-full object-cover"/>
+    <img :src="user.image ? user.image : '/src/assets/default_profile_image.png'" alt="이미지 없음" class="w-24 h-24 mx-auto rounded-full object-cover"/>
   </div>
   
         <!-- 이미지 업로드 필드 -->

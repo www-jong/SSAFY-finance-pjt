@@ -34,6 +34,7 @@ const isSubscribed = computed(() => {
   console.log('구독정보',props.product.product)
   return props.product.product.join_user.includes(store.my_id);
 });
+
 const showModal = ref(false)
 const selectedOption = ref(null)
 

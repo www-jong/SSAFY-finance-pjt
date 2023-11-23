@@ -2,12 +2,9 @@
   <div v-if="isDataLoaded" class="p-4">
     <div class="mb-4">
       <select v-model="selectedCurrency" class="block p-2 border border-gray-200 rounded">
-        <option value="USD (AM)">USD (AM)</option>
-        <option value="USD (PM)">USD (PM)</option>
-        <option value="GBP (AM)">GBP (AM)</option>
-        <option value="GBP (PM)">GBP (PM)</option>
-        <option value="EURO (AM)">EURO (AM)</option>
-        <option value="EURO (PM)">EURO (PM)</option>
+        <option value="USD">USD</option>
+        <option value="GBP">GBP</option>
+        <option value="EURO">EURO</option>
       </select>
     </div>
 
@@ -26,20 +23,21 @@ import { ref, watchEffect, computed, onMounted } from 'vue';
 import LineChart from '@/components/LineChart.vue';
 import { useApiStore } from '@/stores/api';
 
-const linecolor="#FFD700"
+
+const linecolor="#c0c0c0"
 const apiStore = useApiStore();
-const selectedCurrency = ref('USD (AM)');
+const selectedCurrency = ref('USD');
 const chartData = ref([]);
 const isDataLoaded = ref(false);
 
 onMounted(async () => {
-  await apiStore.getGold();
+  await apiStore.getSilver();
   isDataLoaded.value = true;
 });
 
-const goldPriceData = computed(() => {
+const silverPriceData = computed(() => {
   try {
-    return JSON.parse(apiStore.golds);
+    return JSON.parse(apiStore.silvers);
   } catch (e) {
     return [];
   }
@@ -51,13 +49,13 @@ const convertTimestampToDate = (timestamp) => {
 };
 
 const transformChartData = () => {
-  if (Array.isArray(goldPriceData.value) && goldPriceData.value.length > 0) {
+  if (Array.isArray(silverPriceData.value) && silverPriceData.value.length > 0) {
     chartData.value = {
-      labels: goldPriceData.value.map(item => convertTimestampToDate(item.Date)),
+      labels: silverPriceData.value.map(item => convertTimestampToDate(item.Date)),
       datasets: [
         {
           label: selectedCurrency.value,
-          data: goldPriceData.value.map(item => item[selectedCurrency.value]),
+          data: silverPriceData.value.map(item => item[selectedCurrency.value]),
           // 스타일 설정
         }
       ]

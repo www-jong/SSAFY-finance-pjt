@@ -29,8 +29,9 @@ import DepositModal from '@/components/DepositModal.vue'
 
 const props = defineProps({
   product: Object,
+  type:String
 })
-const modal = 'deposit'
+const modal = props.type
 const showModal = ref(false)
 const selectedOption = ref(null)
 const getRate = (months) => {

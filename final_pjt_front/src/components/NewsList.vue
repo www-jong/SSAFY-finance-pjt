@@ -1,8 +1,8 @@
 <template>
 
-        <h3 class="text-xl font-semibold text-gray-500 mb-4">오늘의 금융 뉴스</h3>
-        <div v-for="news in newsList" :key="news.id" class=" p-4 rounded-lg shadow bg-white hover:shadow-md transition-shadow">
-            <a :href="news.link" class="text-blue-500 hover:text-blue-700">
+        <h3 class="text-xl font-semibold text-gray-500 mb-3 mt-4 ml-4 ">오늘의 금융 뉴스</h3>
+        <div v-for="news in newsList" :key="news.id" class=" p-3 rounded-lg shadow bg-white hover:shadow-md transition-shadow border">
+            <a :href="news.link" class="text-black-300 hover:text-blue-700">
                 <p v-html="news.title" class="text-lg"></p>
             </a>
         </div>

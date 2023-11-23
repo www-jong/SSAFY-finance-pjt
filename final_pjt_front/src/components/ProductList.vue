@@ -1,10 +1,12 @@
 <template>
-  <div>
-    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" @click="loadDepositProducts">예금목록 보기</button>
-    <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" @click="loadSavingProducts">적금목록 보기</button>
+  <div class="container mx-auto py-6">
+    <div class="flex justify-center space-x-4 mb-6">
+      <button class="bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded transition-all duration-300 transform hover:scale-105 shadow-lg" @click="loadDepositProducts">예금목록 보기</button>
+      <button class="bg-green-600 hover:bg-green-800 text-white font-bold py-2 px-4 rounded transition-all duration-300 transform hover:scale-105 shadow-lg" @click="loadSavingProducts">적금목록 보기</button>
+    </div>
     <LoadingPage v-if="store.loading" />
 
-    <div v-else-if="showDepositList" class="mt-6">
+    <div v-else-if="showDepositList" class="mt-6 border border-gray-300 shadow-lg rounded-lg">
       <table class="min-w-full divide-y divide-gray-200">
         <thead>
   <tr>
@@ -44,7 +46,7 @@
       <Pagination :current-page="currentPage" :total-pages="totalDepositPages" @change-page="setPage" />
     </div>
 
-    <div class="mt-6" v-else-if="showSavingList">
+    <div class="mt-6 border border-gray-300 shadow-lg rounded-lg" v-else-if="showSavingList">
       <table class="min-w-full divide-y divide-gray-200">
         <thead>
           <tr>
@@ -105,14 +107,14 @@ const SavingcurrentSort = ref({ term: null, direction: null });
 
 const loadDepositProducts = async () => {
   await store.get_deposit_product();
-  showDepositList.value = true;
   showSavingList.value = false;
+  showDepositList.value = true;
 };
 
 const loadSavingProducts = async () => {
   await store.get_saving_product();
-  showSavingList.value = true;
   showDepositList.value = false;
+  showSavingList.value = true;
 };
 
 const sortDeposits = (term) => {

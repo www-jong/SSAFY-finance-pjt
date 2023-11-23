@@ -463,12 +463,9 @@ export const useStore = defineStore('counter', () => {
     })
       .then(res => {
         //alert("예금조회완");
-        console.log('예금조회 완')
-        console.log(res.data.data)
+        console.log('예금조회 완료')
         loading.value=false
         deposit_products.value = res.data.data
-        console.log(res.data.data)
-        //router.push({ name: 'HomeView' })
       })
       .catch(err => {
         console.error(err);
@@ -484,11 +481,9 @@ export const useStore = defineStore('counter', () => {
     })
       .then(res => {
         //alert("예금조회완");
-        console.log('적금조회 완')
+        console.log('적금조회 완료')
         loading.value=false
         saving_products.value = res.data.data
-        console.log(saving_products.value)
-        //router.push({ name: 'HomeView' })
       })
       .catch(err => {
         console.error(err);
@@ -496,7 +491,8 @@ export const useStore = defineStore('counter', () => {
       });
   }
   const join_product = function (type,code) {
-    //loading.value=true
+    loading.value=true
+    console.log('@@@@@@',type)
     axios({
       method: 'post',
       url: `${API_URL}/api/v1/join_${type}_product/`,
@@ -523,7 +519,8 @@ export const useStore = defineStore('counter', () => {
           }
         }
         console.log('가입 완')
-        loading.value=true
+        alert(res.data.message)
+        loading.value=false
       })
       .catch(err => {
         console.error(err);

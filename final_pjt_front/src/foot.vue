@@ -1,9 +1,9 @@
 <template>
 <!--Footer container-->
 <footer
-  class="flex flex-col items-center bg-neutral-200 text-center text-white pt-2 dark:bg-neutral-600">
+  class="flex flex-col items-center bg-neutral-200 text-center mt-12 text-white pt-2 dark:bg-neutral-600">
   <div class="container pt-5">
-    <div class="mb-9 flex justify-center">
+    <div class="mb-6 flex justify-center">
       <a href="https://www.instagram.com/wwwwww__jong/" class="mr-9 text-neutral-800 dark:text-neutral-200">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -28,14 +28,16 @@
   </div>
 
   <!--Copyright section-->
+  
   <div
     class="w-full bg-neutral-300 p-4 text-center text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200">
     © 2023 Copyright:
     <a
       class="text-neutral-800 dark:text-neutral-400"
-      href="https://tw-elements.com/"
-      >THE SLA</a
+      href="https://www.tesla.com/ko_kr"
+      >T H E S L A</a
     >
+    
   </div>
 </footer>
 </template>

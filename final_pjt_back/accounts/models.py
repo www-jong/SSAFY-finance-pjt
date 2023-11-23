@@ -44,6 +44,3 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.username
 
-class FinancialProduct(models.Model):
-    name = models.CharField(max_length=100)
-    # 기타 필드...

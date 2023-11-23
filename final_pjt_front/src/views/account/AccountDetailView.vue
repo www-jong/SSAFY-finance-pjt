@@ -27,7 +27,7 @@
                         <div
                             class="w-48 h-48 bg-indigo-100 mx-auto rounded-full shadow-2xl absolute inset-x-0 top-0 -mt-24 flex items-center justify-center text-indigo-500">
                             <img 
-                            :src="filteredsearch_user.image ? filteredsearch_user.image : '@/assets/default_profile_image.png'"
+                            :src="filteredsearch_user.image ? filteredsearch_user.image : '/src/assets/default_profile_image.png'"
                             alt="Profile Image" 
                             class=" rounded-full object-cover w-full h-full"
                             @click="openImageModal"
@@ -108,7 +108,7 @@
     </thead>
                         <tbody>
                             <myProductListItem v-for="(product, index) in store.search_user_products" :key="product.id"
-                                :product="product" @update:checked="handleChecked" />
+                                :product="product" :type="get_type(product)" @update:checked="handleChecked" />
                         </tbody>
                     </table>
                 </div>
@@ -157,6 +157,13 @@ const isCurrentUser = computed(() => {
     return store.search_user && store.my_username && (store.search_user.username === store.my_username);
 });
 
+const get_type = (product) => {
+  if (product.product.fin_prdt_nm && product.product.fin_prdt_nm.includes("예금")) {
+    return 'deposit';
+  } else {
+    return 'saving';
+  }
+}
 onMounted(() => {
   
     store.get_user_data(route.params.search_username, () => router.push('/'));
@@ -265,6 +272,7 @@ const openModal = () => {
 const closeModal = () => {
     console.log('닫아')
     store.account_modal_status = false;
+    router.go(0)
 };
 
 const saveProfile = () => {

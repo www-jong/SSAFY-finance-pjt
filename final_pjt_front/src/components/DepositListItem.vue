@@ -24,11 +24,11 @@ import {useStore} from '@/stores/index'
 import DepositModal from '@/components/DepositModal.vue'
 const store = useStore()
 
-
 const modal = "deposit"
 const props = defineProps({
   product: Object,
 })
+
 // 사용자가 이미 구독했는지 확인
 const isSubscribed = computed(() => {
   console.log('구독정보',props.product.product)

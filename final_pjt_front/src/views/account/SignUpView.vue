@@ -1,15 +1,4 @@
 <template>
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Tailwind Register Template</title>
-        <meta name="author" content="David Grzyb">
-        <meta name="description" content="">
-
-        <!-- Tailwind -->
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
-    </head>
-
     <body class="bg-white font-family-karla h-screen">
 
         <div class="w-full flex flex-wrap">
@@ -18,7 +7,7 @@
             <div class="w-full md:w-1/2 flex flex-col">
 
                 <div class="flex justify-center md:justify-start pt-12 md:pl-12 md:-mb-12">
-                    <a href="#" class="bg-black text-white font-bold text-xl p-4" alt="Logo">Logo</a>
+                    <img src="@/assets/logo.png" class="text-white font-bold text-xl p-4 w-28">
                 </div>
                 <p class="text-center text-3xl">Join Us.</p>
                 <div
@@ -117,7 +106,7 @@
 
             <!-- Image Section -->
             <div class="w-1/2 shadow-2xl">
-                <img class="object-cover w-full h-screen hidden md:block" src="https://source.unsplash.com/IXUM4cJynP0"
+                <img class="object-cover w-full h-screen hidden md:block" src="@/assets/background.png"
                     alt="Background" />
             </div>
         </div>

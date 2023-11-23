@@ -1,6 +1,5 @@
 <template>
   <main>
-    <h1>환율</h1>
     <ExChange />
   </main>
 </template>
