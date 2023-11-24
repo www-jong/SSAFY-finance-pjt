@@ -11,10 +11,6 @@ import { watch } from 'vue';
 
 const route = useRoute()
 const store = useStore()
-console.log('views-board-type',route.params.board_type)
-onMounted(() => {
-  console.log('dd')
-})
 
 </script>
 

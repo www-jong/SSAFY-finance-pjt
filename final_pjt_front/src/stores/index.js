@@ -82,7 +82,6 @@ export const useStore = defineStore('counter', () => {
     my_username.value = null;
     my_nickname.value = null;
   
-    console.log('로그아웃 완료');
   }
 
   const signUp = function (payload) {
@@ -104,7 +103,6 @@ export const useStore = defineStore('counter', () => {
       }
     })
       .then(res => {
-        console.log('회원가입 완료')
         const password = password1
         logIn({ username, password })
       })
@@ -127,7 +125,6 @@ export const useStore = defineStore('counter', () => {
       .then(res => {
         if(res.data.message==='success'){
           account_modal_status.value=false
-        console.log('수정 완료')
         alert('수정이 완료되었습니다.\n 다시 로그인해주세요.')
         logOut()
       }
@@ -136,7 +133,6 @@ export const useStore = defineStore('counter', () => {
       }
       })
       .catch((err) => {
-        console.log(err)
         alert(err.response.data.data)
       });
   }
@@ -154,7 +150,6 @@ export const useStore = defineStore('counter', () => {
       .then(res => {
         if(res.data.message==='success'){
           search_user.value.image = res.data.data;
-        console.log('수정 완료',res.data.data)
         alert('수정이 완료되었습니다.',res.data.data)
         account_image_modal_status.value=false
       }
@@ -163,7 +158,6 @@ export const useStore = defineStore('counter', () => {
       }
       })
       .catch((err) => {
-        console.log(err)
         alert(err.response.data.data)
       });
   }
@@ -177,16 +171,12 @@ export const useStore = defineStore('counter', () => {
       .then(res => {
         exchange_data.value = res.data.data
         exchange_datetime.value = res.data.datetime
-        console.log(res.data)
         loading.value=false
       })
       .catch(err => console.log(err))
   }
 
   const getBoards = function (board_type) {
-    console.log('counter-board-type', board_type)
-    console.log('token', token.value)
-    console.log(articles.value)
     //articles.value=''
     axios({
       method: 'get',
@@ -208,7 +198,6 @@ export const useStore = defineStore('counter', () => {
 
 
   const createArticle = function (payload) {
-    console.log('router', payload)
     axios({
       method: 'post',
       url: `${API_URL}/boards/${payload.board_type}/`,

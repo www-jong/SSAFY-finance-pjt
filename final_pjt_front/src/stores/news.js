@@ -11,7 +11,6 @@ export const useNewsStore = defineStore('news', () => {
       url: `${URL}/api/v1/news`
     })
       .then(res => {
-        console.log(res.data.items)
         news.value = res.data.items
       })
       .catch(err => console.log(err))

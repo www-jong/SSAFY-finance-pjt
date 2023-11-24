@@ -24,7 +24,7 @@
 
 > ## ❗ 더쓸라 로고
 
-(로고 이미지)
+![logo](https://github.com/www-jong/SSAFY-finance-pjt/assets/88592432/7c8c8f80-6558-43a7-a010-e88e39f9d6fd)
 
 ---
 
@@ -186,13 +186,12 @@
 
 > ## 🏗️ 개체-관계 다이어그램 (ERD)
 
-(이미지)
+![이미지](https://github.com/www-jong/SSAFY-finance-pjt/assets/88592432/0ce14783-4848-42a6-b03c-ec1391844f6d)
 
 ---
 
 > ## 📚 컴포넌트 다이어그램
-
-![](C:\Users\SSAFY\AppData\Roaming\marktext\images\2023-11-24-09-39-25-image.png)
+![컴포넌트](https://github.com/www-jong/SSAFY-finance-pjt/assets/88592432/8c2c8e24-244a-4ab2-b32d-b9f1d528f194)
 
 ---
 

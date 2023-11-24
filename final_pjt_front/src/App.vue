@@ -56,7 +56,6 @@ import { useRouter } from 'vue-router'
 
 const router=useRouter()
 const store = useStore();
-console.log('appvue')
 const myname=store.username
 const isDropdownOpen = ref(false);
 

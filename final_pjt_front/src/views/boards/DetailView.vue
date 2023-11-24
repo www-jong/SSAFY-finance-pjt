@@ -321,17 +321,13 @@ const saveEdit = (comment) => {
 // 게시글 삭제
 const deleteArticle = () => {
   if (confirm("게시글을 삭제하시겠습니까?")) {
-    console.log("게시글 삭제 작업 시작");
     store.article_delete(route.params.board_type, article.value.id) // 여기 수정
       .then(() => {
-        console.log("게시글 삭제 성공");
         router.push({ name: 'BoardView', params: { board_type: route.params.board_type } });
       })
       .catch(err => {
         console.error("게시글 삭제 실패:", err);
       });
-  } else {
-    console.log("게시글 삭제 작업 취소");
   }
 };
 

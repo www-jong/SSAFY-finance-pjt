@@ -179,7 +179,6 @@ const searchPlaces = (searchkeyword) => {
   }
 
   places.keywordSearch(searchkeyword, (data, status) => {
-      alert('dd')
       if (status === kakao.maps.services.Status.OK) {
           //displaySearchResults(data);
           console.log('data!!', data)

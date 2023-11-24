@@ -210,8 +210,6 @@ const chartData = computed(() => {
     const filteredProducts = store.search_user_products.filter(product =>
         checkedProducts.value.includes(product.product.id)
     );
-    console.log('####', filteredProducts)
-    console.log(checkedProducts)
     const datasets = filteredProducts.map(product => {
         const data = labels.map(label => {
             const months = Number(label.split('개월')[0]);
@@ -250,19 +248,15 @@ const handleChecked = ({ product, isChecked }) => {
 
 
 const openImageModal = () => {
-  console.log('이미지 모달 염',store.account_image_modal_status)
   store.account_image_modal_status = true;
-  console.log('이미지 모달 염2',store.account_image_modal_status)
 };
 
 const closeImageModal = () => {
-    console.log('닫아')
     store.account_image_modal_status = false;
     router.go(0)
 };
 
 const saveImageProfile = () => {
-  console.log('이미지 업로드 완');
 };
 
 const openModal = () => {
@@ -270,13 +264,11 @@ const openModal = () => {
 };
 
 const closeModal = () => {
-    console.log('닫아')
     store.account_modal_status = false;
     router.go(0)
 };
 
 const saveProfile = () => {
-  console.log('프로필 업데이트 완');
   store.token = null;
   store.my_username = null;
   store.my_nickname = null;

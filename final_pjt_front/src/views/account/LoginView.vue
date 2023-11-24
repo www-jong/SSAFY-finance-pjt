@@ -50,7 +50,6 @@ const password = ref('');
 
 const store = useStore();
 const logIn = () => {
-  console.log('로그인 함수 실행',username.value,password.value)
   const payload = {
     username: username.value,
     password: password.value

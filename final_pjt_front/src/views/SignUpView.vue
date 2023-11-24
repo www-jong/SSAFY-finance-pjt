@@ -117,7 +117,6 @@ const signUp = () => {
     alert("Passwords do not match.");
     return;
   }
-  console.log('birth!!', birth)
   const payload = {
     username: username.value,
     password1: password1.value,
