@@ -204,7 +204,7 @@ asfsaf
 - 개념
   - 많은 사람들의들의 나이, 소득, 자산 및 금융상품 선호도를 통해 나와 유사한 사람들이 선호하는 금융상품을 추천
 - 사용자 기반 유사도 측정(코사인 유사도)
-  ![algo](https://github.com/www-jong/SSAFY-finance-pjt/assets/88592432/23b38572-8564-4f4b-b9cb-69fa2ffba2ba)
+  ![algo](https://github.com/www-jong/SSAFY-finance-pjt/assets/88592432/23b38572-8564-4f4b-b9cb-69fa2ffba2ba width="200" height="200")
   - 두 벡터의 코사인각도를 계산해 유사성 측정
   - 즉, 구하고자 하는 사람의 금융상품 선호도(추천)과 사람들을 1:1로 코사인유사도를 구해 금융상품 선호도 우선순위 설정
 - 사용한 유저데이터
