@@ -183,6 +183,13 @@ asfsaf
 - 네이버
   
   - 뉴스 검색 API
+ 
+- 나스닥
+  - 금 시세 API
+  - 은 시세 API
+
+- 코인파프리카
+  - 실시간 코인가격 API
 
 ---
 
@@ -193,9 +200,171 @@ asfsaf
 ---
 
 > ## ✨ 금융 상품 추천 알고리즘에 대한 기술적 설명
-
-ㅁㄴㅇㄻㄴㅇㄹ
-
+### 사용자 기반, 코사인 유사도를 이용한 협업 필터링 추천(Collaborative Filtering)
+- 개념
+  - 많은 사람들의들의 나이, 소득, 자산 및 금융상품 선호도를 통해 나와 유사한 사람들이 선호하는 금융상품을 추천
+- 사용자 기반, 유사도 측정(코사인 유사도)
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mi>s</mi>
+  <mi>i</mi>
+  <mi>m</mi>
+  <mo stretchy="false">(</mo>
+  <mi>u</mi>
+  <mo>,</mo>
+  <msup>
+    <mi>u</mi>
+    <mo data-mjx-alternate="1">&#x2032;</mo>
+  </msup>
+  <mo stretchy="false">)</mo>
+  <mo>=</mo>
+  <mi>c</mi>
+  <mi>o</mi>
+  <mi>s</mi>
+  <mo stretchy="false">(</mo>
+  <mi>&#x3B8;</mi>
+  <mo stretchy="false">)</mo>
+  <mo>=</mo>
+  <mfrac>
+    <mrow>
+      <msub>
+        <mi>R</mi>
+        <mrow data-mjx-texclass="ORD">
+          <mi>u</mi>
+        </mrow>
+      </msub>
+      <mo>&#x22C5;</mo>
+      <msub>
+        <mi>R</mi>
+        <mrow data-mjx-texclass="ORD">
+          <msup>
+            <mi>u</mi>
+            <mo data-mjx-alternate="1">&#x2032;</mo>
+          </msup>
+        </mrow>
+      </msub>
+    </mrow>
+    <mrow>
+      <mrow data-mjx-texclass="INNER">
+        <mo data-mjx-texclass="OPEN" symmetric="true">&#x2016;</mo>
+        <msub>
+          <mi>R</mi>
+          <mrow data-mjx-texclass="ORD">
+            <mi>u</mi>
+          </mrow>
+        </msub>
+        <mo data-mjx-texclass="CLOSE" symmetric="true">&#x2016;</mo>
+      </mrow>
+      <mrow data-mjx-texclass="INNER">
+        <mo data-mjx-texclass="OPEN" symmetric="true">&#x2016;</mo>
+        <msub>
+          <mi>R</mi>
+          <mrow data-mjx-texclass="ORD">
+            <msup>
+              <mi>u</mi>
+              <mo data-mjx-alternate="1">&#x2032;</mo>
+            </msup>
+          </mrow>
+        </msub>
+        <mo data-mjx-texclass="CLOSE" symmetric="true">&#x2016;</mo>
+      </mrow>
+    </mrow>
+  </mfrac>
+  <mo>=</mo>
+  <mfrac>
+    <mrow>
+      <munderover>
+        <mo data-mjx-texclass="OP">&#x2211;</mo>
+        <mrow data-mjx-texclass="ORD">
+          <mi>i</mi>
+          <mo>=</mo>
+          <mn>1</mn>
+        </mrow>
+        <mrow data-mjx-texclass="ORD">
+          <mi>n</mi>
+        </mrow>
+      </munderover>
+      <msub>
+        <mi>R</mi>
+        <mrow data-mjx-texclass="ORD">
+          <mi>u</mi>
+          <mi>i</mi>
+        </mrow>
+      </msub>
+      <mo>&#xD7;</mo>
+      <msub>
+        <mi>R</mi>
+        <mrow data-mjx-texclass="ORD">
+          <msup>
+            <mi>u</mi>
+            <mo data-mjx-alternate="1">&#x2032;</mo>
+          </msup>
+          <mi>i</mi>
+        </mrow>
+      </msub>
+    </mrow>
+    <mrow>
+      <msqrt>
+        <munderover>
+          <mo data-mjx-texclass="OP">&#x2211;</mo>
+          <mrow data-mjx-texclass="ORD">
+            <mi>i</mi>
+            <mo>=</mo>
+            <mn>1</mn>
+          </mrow>
+          <mrow data-mjx-texclass="ORD">
+            <mi>n</mi>
+          </mrow>
+        </munderover>
+        <mo stretchy="false">(</mo>
+        <msub>
+          <mi>R</mi>
+          <mrow data-mjx-texclass="ORD">
+            <mi>u</mi>
+            <mi>i</mi>
+          </mrow>
+        </msub>
+        <msup>
+          <mo stretchy="false">)</mo>
+          <mrow data-mjx-texclass="ORD">
+            <mn>2</mn>
+          </mrow>
+        </msup>
+      </msqrt>
+      <mo>&#xD7;</mo>
+      <msqrt>
+        <munderover>
+          <mo data-mjx-texclass="OP">&#x2211;</mo>
+          <mrow data-mjx-texclass="ORD">
+            <mi>i</mi>
+            <mo>=</mo>
+            <mn>1</mn>
+          </mrow>
+          <mrow data-mjx-texclass="ORD">
+            <mi>n</mi>
+          </mrow>
+        </munderover>
+        <mo stretchy="false">(</mo>
+        <msub>
+          <mi>R</mi>
+          <mrow data-mjx-texclass="ORD">
+            <msup>
+              <mi>u</mi>
+              <mo data-mjx-alternate="1">&#x2032;</mo>
+            </msup>
+            <mi>i</mi>
+          </mrow>
+        </msub>
+        <msup>
+          <mo stretchy="false">)</mo>
+          <mrow data-mjx-texclass="ORD">
+            <mn>2</mn>
+          </mrow>
+        </msup>
+      </msqrt>
+    </mrow>
+  </mfrac>
+</math>
+- 
 ---
 
 > ## 🍀 프로젝트 후기
