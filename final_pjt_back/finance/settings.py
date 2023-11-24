@@ -25,7 +25,7 @@ NASDAQ_KEY=env('NASDAQ')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.202.129']
 
 
 # Application definition
@@ -87,7 +87,9 @@ CORS_ALLOWED_ORIGINS = [
      'http://127.0.0.1:5173',
      'http://localhost:5173',
      'https://gregarious-lollipop-9d22b2.netlify.app',
-     'http://localhost:8000'
+     'http://localhost:8000',
+     'http://192.168.202.129:5173',
+     'http://xn--9m1bw2f43o.xn--yq5b.xn--3e0b707e'
 ]
 
 ROOT_URLCONF = "finance.urls"

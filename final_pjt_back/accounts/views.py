@@ -33,9 +33,7 @@ def Detail(request, search_name):
         user_products=user.joined_saving_products.all()
         for item in user_products:
             options=item.option.all()
-            print(SavingProductSerializer(item).data)
             return_product_and_option.append({'product':SavingProductSerializer(item).data,'option':SavingOptionSerializer(options,many=True).data})
-        print(return_product_and_option)
         result={'message':'success','user_articles': user_articles.data, 'user_comments': user_comments.data,'user_data':serializer.data,'user_products':return_product_and_option}
         return Response(result, status=status.HTTP_200_OK)
     except:
@@ -45,7 +43,6 @@ def Detail(request, search_name):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def follow(request):
-    print('도달',request.data['from_user_id'])
     from_user=get_object_or_404(get_user_model(),pk=request.data['from_user_id'])
     to_user=get_object_or_404(get_user_model(),pk=request.data['to_user_id'])
     message=''
@@ -56,7 +53,6 @@ def follow(request):
         to_user.followers.add(from_user)
         message='followed'
         
-    print('성공')
     return Response({'message':message}, status=status.HTTP_200_OK)
 
 @api_view(['DELETE','POST'])

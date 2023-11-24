@@ -1,11 +1,11 @@
 <template>
   <div class="container mx-auto px-4 py-8">
-    <h1 class="text-2xl font-bold text-center mb-6">{{route.params.board_type}} 게시판</h1>
+    <h1 class="text-2xl font-bold text-center mb-6 ">{{route.params.board_type}} 게시판</h1>
     <RouterLink
       :to="{ name: 'CreateView', params: { board_type: route.params.board_type } }"
       class="inline-block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors"
     >
-      글작성
+      글 작성
     </RouterLink>
     <ArticleList :board_type="route.params.board_type" :loading="loading" class="mt-4" />
   </div>

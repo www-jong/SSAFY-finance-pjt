@@ -18,13 +18,13 @@
               <RouterLink class="text-gray-200 text-md hover:text-gray-500" :to="{ name: 'FinanceProductView' }">예적금 비교</RouterLink>
             </span>
             <span class="ml-8">
-              <RouterLink class="text-gray-200 text-md hover:text-gray-500" :to="{ name: 'BoardView',params: { board_type: 'notice' }}">주식게시판</RouterLink>
+              <RouterLink class="text-gray-200 text-md hover:text-gray-500" :to="{ name: 'BoardView',params: { board_type: 'Stock' }}">주식게시판</RouterLink>
             </span>
             <span class="ml-8">
-              <RouterLink class="text-gray-200 text-md hover:text-gray-500" :to="{ name: 'BoardView',params: { board_type: 'free' }}">비트코인게시판</RouterLink>
+              <RouterLink class="text-gray-200 text-md hover:text-gray-500" :to="{ name: 'BoardView',params: { board_type: 'Coin' }}">비트코인게시판</RouterLink>
             </span>
             <span class="ml-8">
-              <RouterLink class="text-gray-200 text-md hover:text-gray-500" :to="{ name: 'BoardView',params: { board_type: 'question' }}">자유게시판</RouterLink>
+              <RouterLink class="text-gray-200 text-md hover:text-gray-500" :to="{ name: 'BoardView',params: { board_type: 'Free' }}">자유게시판</RouterLink>
             </span>
           </div>
           <div class="md:flex mr-5 space-x-6 hidden">

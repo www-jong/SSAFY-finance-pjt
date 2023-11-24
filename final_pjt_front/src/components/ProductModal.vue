@@ -73,6 +73,7 @@ const unsubscribe = (code, save_trm) => {
 
 const closeModal = () => {
   emit('update:showModal', false);
+  store.loading=false
 };
 </script>
 

@@ -350,8 +350,8 @@ def recommend(request,user_id):
 
     NUM_USERS=20000
     NUM_ITEMS=len(filtered_item)
-    SALARY_LIST=[i*500000 for i in range(21)] # 0~ 1000만까지 50만단위 20개
-    CAPITAL_LIST=[i*10000000 for i in range(100)] # 0~10억까지 500만단위 40개
+    SALARY_LIST=[i*500000 for i in range(21)]
+    CAPITAL_LIST=[i*10000000 for i in range(100)]
 
     np.random.seed(0)
     user_salary=[SALARY_LIST[int(random.random()*21)] for i in range(NUM_USERS)]
@@ -382,28 +382,24 @@ def recommend(request,user_id):
     if serializer.data.get('capital') >= CAPITAL_LIST[-1]:
         rounded_capital = CAPITAL_LIST[-1]
     new_user_data={'age':serializer.data.get('age'),'capital':rounded_capital,'salary':rounded_salary}
-    num_recommendations=3
+    num_recommendations= 3 #추천할 종목 수
 
     new_user_features = pd.DataFrame([new_user_data], columns=['age', 'capital', 'salary'])
     print('co',user_features,new_user_features)
+
     # 기존 사용자 데이터와의 유사도 계산
     new_user_similarities = cosine_similarity(user_features, new_user_features)
-
     # 유사도가 높은 사용자들 찾기
     similar_users = pd.Series(new_user_similarities.flatten()).sort_values(ascending=False)
-
     # 추천할 종목 리스트
     recommended_items = []
-
     for similar_user_index in similar_users.index:
         # 유사한 사용자의 종목 데이터
         similar_user_subscriptions = data.iloc[similar_user_index, 3:]
-
         # 새로운 종목 추천
         new_recommendations = similar_user_subscriptions.index[
             similar_user_subscriptions == 1
         ]
-
         for item in new_recommendations:
             if item not in recommended_items:
                 recommended_items.append(item)

@@ -1,11 +1,10 @@
 <template>
   <div class="container mx-auto p-6">
-    <h1 class="text-3xl font-bold text-center mb-6">Detail</h1>
+    <h1 class="text-3xl font-bold text-center mb-6">{{ article.title }}</h1>
 
     <!-- 뒤로 가기 버튼 -->
     <button @click="goBack" class="mb-6 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">뒤로
       가기</button>
-
     <hr>
     <div v-if="article && article.user" class="bg-white p-4 rounded-lg shadow-md">
 
@@ -18,7 +17,7 @@
         </p>
       </div>
       <hr>
-      <p class="text-lg text-gray-600 mt-2">내용: {{ article.content }}</p>
+      <p class="text-lg text-gray-600 mt-2"> {{ article.content }}</p>
       <br>
       <br>
       <hr>

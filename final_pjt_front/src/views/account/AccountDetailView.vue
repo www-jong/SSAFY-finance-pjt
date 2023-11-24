@@ -277,6 +277,10 @@ const closeModal = () => {
 
 const saveProfile = () => {
   console.log('프로필 업데이트 완');
+  store.token = null;
+  store.my_username = null;
+  store.my_nickname = null;
+  router.push({ name: 'LogInView' });
 };
 
 </script>

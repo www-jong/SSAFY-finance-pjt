@@ -38,7 +38,7 @@
                                 </div>
                                 <div class="absolute bottom-0 left-0 right-0 flex justify-center">
                                     <span class="text-xl font-bold text-gray-800 bg-white p-2 rounded">
-                                        금융상품 추천받기 
+                                        금융상품 추천받기(Beta)
                                     </span>
                                 </div>
                             </div>
@@ -58,7 +58,7 @@
                             </div>
                         </div>
                         <div>
-                            <div class="bg-gray border border-gray-300 shadow-lg rounded-lg h-48 overflow-hidden relative" @click="showFortune">
+                            <div class="bg-gray border border-gray-300 shadow-lg rounded-lg h-48 overflow-hidden relative">
     <div class="container mx-auto px-6 md:px-0 h-full flex items-center justify-center">
         <div class="bg-white   rounded-lg p-1 max-w-xs mx-auto overflow-auto">
             <table class="min-w-full text-xs">

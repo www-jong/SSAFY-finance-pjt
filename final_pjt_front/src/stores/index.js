@@ -126,9 +126,9 @@ export const useStore = defineStore('counter', () => {
     })
       .then(res => {
         if(res.data.message==='success'){
+          account_modal_status.value=false
         console.log('수정 완료')
         alert('수정이 완료되었습니다.\n 다시 로그인해주세요.')
-        account_modal_status.value=false
         logOut()
       }
       else{
@@ -508,6 +508,7 @@ export const useStore = defineStore('counter', () => {
     })
       .then(res => {
         //alert("예금조회완");
+        loading.value=false
         if (type === 'deposit') {
           const index = deposit_products.value.findIndex(product => product.code === code);
           console.log('dd')
@@ -522,8 +523,9 @@ export const useStore = defineStore('counter', () => {
           }
         }
         console.log('가입 완')
-        alert(res.data.message)
         loading.value=false
+        alert(res.data.message)
+        
       })
       .catch(err => {
         console.error(err);

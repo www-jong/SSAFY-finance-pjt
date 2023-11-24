@@ -102,27 +102,36 @@ let searchResults = ref([]);
 const my_position = ref({latitude: 0, longitude:0});
 
 const fetchLocation = () => {
-  console.log('dd')
-return new Promise((resolve, reject) => {
-  if ("geolocation" in navigator) {
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        my_position.value = {
-          latitude: pos.coords.latitude,
-          longitude: pos.coords.longitude
-        };
-        resolve();
-      },
-      (error) => {
-        console.error("Error getting location: ", error);
-        reject(error);
-      }
-    );
-  } else {
-    console.error("Geolocation is not supported by this browser.");
-    reject(new Error("Geolocation not supported"));
-  }
-});
+  return new Promise((resolve, reject) => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          my_position.value = {
+            latitude: pos.coords.latitude,
+            longitude: pos.coords.longitude
+          };
+          resolve();
+        },
+        (error) => {
+          console.error("Error getting location: ", error);
+          // 에러 발생시 기본 좌표를 사용합니다.
+          my_position.value = {
+            latitude: 35.094847,
+            longitude: 128.853615
+          };
+          resolve(); // 여기서 resolve를 호출합니다.
+        }
+      );
+    } else {
+      console.error("Geolocation is not supported by this browser.");
+      // 브라우저가 지오로케이션을 지원하지 않는 경우 기본 좌표를 사용합니다.
+      my_position.value = {
+        latitude: 35.094847,
+        longitude: 128.853615
+      };
+      resolve(); // 여기서 resolve를 호출합니다.
+    }
+  });
 };
 
 onMounted(async () => {

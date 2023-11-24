@@ -23,10 +23,10 @@
                         <input placeholder="Password" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mt-1 leading-tight focus:outline-none focus:shadow-outline" type="password" id="password" v-model.trim="password">
                     </div>
     
-                    <input type="submit" value="LogIn" class="bg-black text-white font-bold text-lg hover:bg-gray-700 p-2 mt-8">
+                    <input type="submit" value="Sign in" class="bg-black text-white font-bold text-lg hover:bg-gray-700 p-2 mt-8">
                 </form>
                 <div class="text-center pt-12 pb-12">
-                    <p>지금 당장 회원가입 하세요!  <RouterLink class="hover:text-gray-300" :to="{name:'SignUpView'}">SignUpPage</RouterLink></p>
+             <p><RouterLink class="hover:text-gray-300" :to="{name:'SignUpView'}"> Sign Up</RouterLink></p>
                 </div>
             </div>
 
